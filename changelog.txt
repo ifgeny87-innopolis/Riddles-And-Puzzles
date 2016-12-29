@@ -1,0 +1,100 @@
+New version 1.0-SNAPSHOT build 0.0.0.1
+Date: Wed Dec 28 16:31:52 GMT+03:00 2016
+Change files from: Thu Jan 01 03:00:00 GMT+03:00 1970
+- main\java\ru\rap\common\Config.java
+- main\java\ru\rap\common\exceptions\DaoException.java
+- main\java\ru\rap\common\exceptions\DbConnectException.java
+- main\java\ru\rap\common\Messages.java
+- main\java\ru\rap\common\PageList.java
+- main\java\ru\rap\controllers\BaseController.java
+- main\java\ru\rap\controllers\RiddlesController.java
+- main\java\ru\rap\controllers\UserController.java
+- main\java\ru\rap\controllers\WorkshopController.java
+- main\java\ru\rap\dao\BaseDao.java
+- main\java\ru\rap\dao\RiddleDao.java
+- main\java\ru\rap\dao\UserDao.java
+- main\java\ru\rap\libraries\ClassLibrary.java
+- main\java\ru\rap\libraries\DaoLibrary.java
+- main\java\ru\rap\libraries\HashLibrary.java
+- main\java\ru\rap\libraries\PagerLibrary.java
+- main\java\ru\rap\libraries\RequestLibrary.java
+- main\java\ru\rap\managers\DatabaseManager.java
+- main\java\ru\rap\models\BaseModel.java
+- main\java\ru\rap\models\Riddle.java
+- main\java\ru\rap\models\User.java
+- main\java\ru\rap\restapi\BaseApi.java
+- main\java\ru\rap\restapi\JsonResult.java
+- main\java\ru\rap\restapi\UserApi.java
+- main\java\ru\rap\services\BaseService.java
+- main\java\ru\rap\services\RiddleService.java
+- main\java\ru\rap\services\UserService.java
+- main\java\ru\rap\validators\IntValidator.java
+- main\java\ru\rap\validators\Validator.java
+- main\resources\log4j.properties
+- main\webapp\app\fonts\glyphicons-halflings-regular.ttf
+- main\webapp\app\js\bootstrap.min.js
+- main\webapp\app\js\jquery-3.1.1.min.js
+- main\webapp\app\style\bootstrap.min.css
+- main\webapp\errorPage.jsp
+- main\webapp\index.jsp
+- main\webapp\jsp\riddles\create.jsp
+- main\webapp\jsp\riddles.jsp
+- main\webapp\jsp\workshop.jsp
+- main\webapp\META-INF\context.xml
+- main\webapp\WEB-INF\tags\alert.tag
+- main\webapp\WEB-INF\tags\table.tag
+- main\webapp\WEB-INF\tags\wrapper.tag
+- main\webapp\WEB-INF\web.xml
+- test\java\JsonTest.java
+
+------------------------------------------------------------
+New version 1.0-SNAPSHOT build 0.0.0.2
+Date: Thu Dec 29 00:38:41 GMT+03:00 2016
+Change files from: Wed Dec 28 16:31:53 GMT+03:00 2016
+- main\java\ru\rap\common\Config.java
+- main\java\ru\rap\common\exceptions\DaoException.java
+- main\java\ru\rap\common\exceptions\DbConnectException.java
+- main\java\ru\rap\common\Messages.java
+- main\java\ru\rap\common\PageList.java
+- main\java\ru\rap\controllers\BaseController.java
+- main\java\ru\rap\controllers\RiddleController.java
+- main\java\ru\rap\controllers\UserController.java
+- main\java\ru\rap\controllers\WorkshopController.java
+- main\java\ru\rap\dao\AnswerDao.java
+- main\java\ru\rap\dao\BaseDao.java
+- main\java\ru\rap\dao\RiddleDao.java
+- main\java\ru\rap\dao\UserDao.java
+- main\java\ru\rap\libraries\ClassLibrary.java
+- main\java\ru\rap\libraries\DaoLibrary.java
+- main\java\ru\rap\libraries\HashLibrary.java
+- main\java\ru\rap\libraries\PagerLibrary.java
+- main\java\ru\rap\managers\DatabaseManager.java
+- main\java\ru\rap\models\Answer.java
+- main\java\ru\rap\models\BaseModel.java
+- main\java\ru\rap\models\Riddle.java
+- main\java\ru\rap\models\User.java
+- main\java\ru\rap\services\AnswerService.java
+- main\java\ru\rap\services\BaseService.java
+- main\java\ru\rap\services\RiddleService.java
+- main\java\ru\rap\services\UserService.java
+- main\java\ru\rap\validators\IntValidator.java
+- main\java\ru\rap\validators\StrValidator.java
+- main\java\ru\rap\validators\Validator.java
+- main\webapp\jsp\riddles\answer.jsp
+- main\webapp\jsp\riddles\create.jsp
+- main\webapp\jsp\riddles\edit.jsp
+- main\webapp\jsp\riddles.jsp
+- main\webapp\jsp\workshop.jsp
+- main\webapp\WEB-INF\tags\alert.tag
+- main\webapp\WEB-INF\tags\wrapper.tag
+
+------------------------------------------------------------
+New version 1.0-SNAPSHOT build 0.0.0.3
+Date: Thu Dec 29 10:48:15 GMT+03:00 2016
+Change files from: Thu Dec 29 00:38:42 GMT+03:00 2016
+- main\java\ru\rap\controllers\RiddleController.java
+- main\java\ru\rap\dao\AnswerDao.java
+- main\java\ru\rap\services\AnswerService.java
+- main\java\ru\rap\services\RiddleService.java
+- main\webapp\jsp\riddles\answer.jsp
+- main\webapp\jsp\riddles.jsp

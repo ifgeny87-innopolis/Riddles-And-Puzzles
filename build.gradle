@@ -1,0 +1,89 @@
+group 'ru.dev87'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'war'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    // logging
+    compile 'org.slf4j:slf4j-api:1.7.21'
+    compile 'org.slf4j:slf4j-log4j12:1.7.21'
+    compile 'log4j:log4j:1.2.17'
+
+    // testing
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-all:1.9.5'
+
+    // servlet and web development
+    compile 'javax.servlet:javax.servlet-api:3.1.0'
+    compile 'com.google.code.gson:gson:2.8.0'
+
+    // mysql database driver
+    compile 'mysql:mysql-connector-java:6.0.5'
+
+    // JSP Standard Tag Library
+    compile 'jstl:jstl:1.2'
+}
+
+compileJava {
+    options.encoding = "UTF-8"
+}
+
+jar {
+    /**
+     * Дальше тема такая:
+     *  1. Ищем файл build.num, в нем должны быть две строки "номер версии" и "дата последнего билда"
+     *  2. Если файла нет, создается с нуля
+     *  3. В файле changelog.txt помещается информация о новом билде и список измененных файлов
+     */
+    File buildNumFile = file("build.num")
+    String buildVersion = "0.0.0.1" // default
+    long lastModified = 0           // default
+
+    if (buildNumFile.exists()) {
+        String[] lines = buildNumFile.readLines()
+        assert lines.size() == 2, 'File `build.num` must have two lines'
+
+        // дата создания последнего билда
+        lastModified = Long.parseLong(lines[1])
+
+        // получаю номер билда из файла
+        lines = lines[0].split("\\.")
+        assert lines.length == 4, 'Build version wrong'
+        lines[3] = Integer.parseInt(lines[3]) + 1 + ""
+        buildVersion = String.join(".", lines)
+    }
+
+    // устанавливаю версию для имени пакета
+    jar.setAppendix(buildVersion)
+
+    // открываю changelog.txt и пишу в него список обновленных файлов
+    File changelog = file("changelog.txt")
+    if (changelog.size())
+    // добавлю <hr/>
+        changelog << "\n" + String.format("%60s", "").replace(" ", "-") + "\n"
+
+    changelog << "New version " + getVersion() + " build " + buildVersion + "\n"
+    changelog << "Date: " + new Date() + "\n"
+    changelog << "Change files from: " + new Date(lastModified) + "\n"
+
+    FileTree tree = fileTree(dir: "src")
+    // буду также отрезать кусок от имени файла, ибо где лежит src и так понятно
+    int pathLength = tree.getDir().getAbsolutePath().length() + 1
+    tree
+            .matching { include "main/**", "test/**" } // просто пример инклуда
+            .filter { f -> return f.lastModified() > lastModified } // фильтр по дате изменения
+            .each { f -> changelog << "- " + f.getPath().substring(pathLength) + "\n" }
+
+    // сохраняю новый номер билда и текущее время билда, файл надо сначала затереть
+    buildNumFile.delete()
+    buildNumFile << buildVersion + "\n"
+    buildNumFile << new Date().getTime()
+}

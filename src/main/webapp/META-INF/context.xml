@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Обязательно с большой буквы и никак иначе -->
+<Context>
+    <Resource name="jdbc/db"
+              description="DB Connection"
+              auth="Container"
+              type="javax.sql.DataSource"
+              driverClassName="com.mysql.jdbc.Driver"
+              factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
+              url="jdbc:mysql://localhost:3306/riddles1?useUnicode=true&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;serverTimezone=UTC&amp;useSSL=false&amp;characterEncoding=UTF-8"
+              username="test"
+              password="123"
+              defaultAutoCommit="false"
+              maxActive="30"
+              maxIdle="5"
+              maxWait="100"
+              testOnBorrow="true"
+              testWhileIdle="true"
+              validationQuery="SELECT 1"
+              timeBetweenEvictionRunsMillis="35000"
+              minEvictableIdleTimeMillis="55000"
+              removeAbandoned="true"
+              removeAbandonedTimeout="3600"
+              logAbandoned="true"
+              validationInterval="35000"
+              closeMethod="close"
+    />
+</Context>
