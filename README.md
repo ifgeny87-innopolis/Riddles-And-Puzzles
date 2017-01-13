@@ -8,6 +8,12 @@
 
 ## Changelog
 
+### Версия 0.0.0.26
+
+1. http://www.mkyong.com/spring-security/spring-security-hello-world-example/
+2. http://www.mkyong.com/spring-security/spring-security-form-login-example/
+3. http://www.mkyong.com/spring-security/spring-security-form-login-using-database/
+
 ### Версия 0.0.0.3
 
 ТЗ Реализовано на 95%.
