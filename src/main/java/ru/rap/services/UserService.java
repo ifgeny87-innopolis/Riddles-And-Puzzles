@@ -28,7 +28,7 @@ public class UserService extends BaseService<User>
 	Logger getLogger() { return log;}
 
 	// для дебага в основном, нужно ли выполнять авто-вход
-	private static boolean ENABLE_AUTO_AUTH = false;
+	private static boolean ENABLE_AUTO_AUTH = true;
 
 	// Singleton
 	private UserService() {}

@@ -98,3 +98,203 @@ Change files from: Thu Dec 29 00:38:42 GMT+03:00 2016
 - main\java\ru\rap\services\RiddleService.java
 - main\webapp\jsp\riddles\answer.jsp
 - main\webapp\jsp\riddles.jsp
+
+------------------------------------------------------------
+New version 1.0-SNAPSHOT build 0.0.0.4
+Date: Sun Jan 08 09:41:08 MSK 2017
+Change files from: Thu Dec 29 10:48:16 MSK 2016
+- test/java/JsonTest.java
+- main/webapp/jsp/riddles/answer.jsp
+- main/webapp/jsp/riddles/create.jsp
+- main/webapp/jsp/riddles/edit.jsp
+- main/webapp/jsp/workshop.jsp
+- main/webapp/jsp/riddles.jsp
+- main/webapp/errorPage.jsp
+- main/webapp/WEB-INF/web.xml
+- main/webapp/WEB-INF/tags/alert.tag
+- main/webapp/WEB-INF/tags/wrapper.tag
+- main/webapp/WEB-INF/tags/table.tag
+- main/webapp/META-INF/context.xml
+- main/java/ru/rap/services/BaseService.java
+- main/java/ru/rap/services/RiddleService.java
+- main/java/ru/rap/services/AnswerService.java
+- main/java/ru/rap/services/UserService.java
+- main/java/ru/rap/libraries/DaoLibrary.java
+- main/java/ru/rap/libraries/ClassLibrary.java
+- main/java/ru/rap/libraries/PagerLibrary.java
+- main/java/ru/rap/libraries/HashLibrary.java
+- main/java/ru/rap/dao/UserDao.java
+- main/java/ru/rap/dao/RiddleDao.java
+- main/java/ru/rap/dao/BaseDao.java
+- main/java/ru/rap/dao/AnswerDao.java
+- main/java/ru/rap/controllers/BaseController.java
+- main/java/ru/rap/controllers/UserController.java
+- main/java/ru/rap/controllers/RiddleController.java
+- main/java/ru/rap/controllers/WorkshopController.java
+- main/java/ru/rap/common/Config.java
+- main/java/ru/rap/common/PageList.java
+- main/java/ru/rap/common/exceptions/DaoException.java
+- main/java/ru/rap/common/exceptions/DbConnectException.java
+- main/java/ru/rap/common/Messages.java
+- main/java/ru/rap/validators/StrValidator.java
+- main/java/ru/rap/validators/Validator.java
+- main/java/ru/rap/validators/IntValidator.java
+- main/java/ru/rap/managers/DatabaseManager.java
+- main/java/ru/rap/models/User.java
+- main/java/ru/rap/models/Answer.java
+- main/java/ru/rap/models/BaseModel.java
+- main/java/ru/rap/models/Riddle.java
+- main/java/ru/rap/restapi/UserApi.java
+- main/java/ru/rap/restapi/JsonResult.java
+- main/java/ru/rap/restapi/BaseApi.java
+- main/resources/log4j.properties
+
+------------------------------------------------------------
+New version 1.0-SNAPSHOT build 0.0.0.5
+Date: Sun Jan 08 09:45:42 MSK 2017
+Change files from: Sun Jan 08 09:41:08 MSK 2017
+
+------------------------------------------------------------
+New version 1.0-SNAPSHOT build 0.0.0.6
+Date: Sun Jan 08 09:49:45 MSK 2017
+Change files from: Sun Jan 08 09:45:42 MSK 2017
+
+------------------------------------------------------------
+New version 1.0-SNAPSHOT build 0.0.0.7
+Date: Sun Jan 08 09:51:53 MSK 2017
+Change files from: Sun Jan 08 09:49:45 MSK 2017
+
+------------------------------------------------------------
+New version 1.0-SNAPSHOT build 0.0.0.8
+Date: Sun Jan 08 09:52:23 MSK 2017
+Change files from: Sun Jan 08 09:51:53 MSK 2017
+
+------------------------------------------------------------
+New version 1.0-SNAPSHOT build 0.0.0.9
+Date: Sun Jan 08 09:52:56 MSK 2017
+Change files from: Sun Jan 08 09:52:23 MSK 2017
+
+------------------------------------------------------------
+New version 1.0-SNAPSHOT build 0.0.0.10
+Date: Sun Jan 08 09:55:06 MSK 2017
+Change files from: Sun Jan 08 09:52:56 MSK 2017
+
+------------------------------------------------------------
+New version 1.0-SNAPSHOT build 0.0.0.11
+Date: Sun Jan 08 09:57:10 MSK 2017
+Change files from: Sun Jan 08 09:55:06 MSK 2017
+
+------------------------------------------------------------
+New version 1.0-SNAPSHOT build 0.0.0.12
+Date: Sun Jan 08 10:28:37 MSK 2017
+Change files from: Sun Jan 08 09:57:10 MSK 2017
+
+------------------------------------------------------------
+New version 1.0-SNAPSHOT build 0.0.0.13
+Date: Sun Jan 08 10:29:12 MSK 2017
+Change files from: Sun Jan 08 10:28:38 MSK 2017
+
+------------------------------------------------------------
+New version 1.0-SNAPSHOT build 0.0.0.14
+Date: Thu Jan 12 11:42:37 MSK 2017
+Change files from: Sun Jan 08 10:29:12 MSK 2017
+- main/webapp/META-INF/context.xml
+- main/java/ru/rap/models/User.java
+- main/resources/hibernate.cfg.xml
+
+------------------------------------------------------------
+New version 1.0-SNAPSHOT build 0.0.0.15
+Date: Thu Jan 12 15:00:03 MSK 2017
+Change files from: Thu Jan 12 11:42:38 MSK 2017
+- main/webapp/WEB-INF/web.xml
+- main/webapp/META-INF/app-context.xml
+- main/java/ru/rap/dao/BaseDao.java
+- main/java/ru/rap/controllers/BaseController.java
+- main/java/ru/rap/managers/DatabaseManager.java
+- main/java/ru/rap/models/User.java
+- main/java/ru/rap/models/BaseModel.java
+- main/java/ru/rap/pulls/DependencyPool.java
+
+------------------------------------------------------------
+New version 1.0-SNAPSHOT build 0.0.0.16
+Date: Thu Jan 12 15:00:45 MSK 2017
+Change files from: Thu Jan 12 15:00:03 MSK 2017
+
+------------------------------------------------------------
+New version 1.0-SNAPSHOT build 0.0.0.17
+Date: Thu Jan 12 15:01:13 MSK 2017
+Change files from: Thu Jan 12 15:00:45 MSK 2017
+
+------------------------------------------------------------
+New version 1.0-SNAPSHOT build 0.0.0.18
+Date: Thu Jan 12 15:01:18 MSK 2017
+Change files from: Thu Jan 12 15:01:13 MSK 2017
+
+------------------------------------------------------------
+New version 1.0-SNAPSHOT build 0.0.0.19
+Date: Thu Jan 12 15:01:36 MSK 2017
+Change files from: Thu Jan 12 15:01:18 MSK 2017
+
+------------------------------------------------------------
+New version 1.0-SNAPSHOT build 0.0.0.20
+Date: Thu Jan 12 15:02:24 MSK 2017
+Change files from: Thu Jan 12 15:01:36 MSK 2017
+
+------------------------------------------------------------
+New version 1.0-SNAPSHOT build 0.0.0.21
+Date: Thu Jan 12 15:03:01 MSK 2017
+Change files from: Thu Jan 12 15:02:24 MSK 2017
+
+------------------------------------------------------------
+New version 1.0-SNAPSHOT build 0.0.0.22
+Date: Fri Jan 13 10:03:58 MSK 2017
+Change files from: Thu Jan 12 15:03:01 MSK 2017
+- main/webapp/WEB-INF/views/error.jsp
+- main/webapp/WEB-INF/views/index.jsp
+- main/webapp/WEB-INF/views/riddles/answer.jsp
+- main/webapp/WEB-INF/views/riddles/my.jsp
+- main/webapp/WEB-INF/views/riddles/create.jsp
+- main/webapp/WEB-INF/views/riddles/edit.jsp
+- main/webapp/WEB-INF/views/riddles.jsp
+- main/webapp/WEB-INF/web.xml
+- main/webapp/WEB-INF/tags/alertText.tag
+- main/webapp/WEB-INF/tags/wrapper.tag
+- main/webapp/WEB-INF/tags/alertException.tag
+- main/webapp/WEB-INF/app-context.xml
+- main/webapp/WEB-INF/dispatcher-servlet.xml
+- main/java/ru/rap/services/UserService.java
+- main/java/ru/rap/controllers/BaseController.java
+- main/java/ru/rap/controllers/UserController.java
+- main/java/ru/rap/controllers/RiddleController.java
+- main/java/ru/rap/controllers/IndexController.java
+- main/java/ru/rap/common/PageList.java
+- main/java/ru/rap/managers/DatabaseManager.java
+
+------------------------------------------------------------
+New version 1.0-SNAPSHOT build 0.0.0.23
+Date: Fri Jan 13 10:46:11 MSK 2017
+Change files from: Fri Jan 13 10:03:58 MSK 2017
+- main/webapp/WEB-INF/web.xml
+- main/webapp/WEB-INF/spring-security.xml
+- main/webapp/META-INF/context.xml
+- main/java/ru/rap/config/SecurityConfig.java
+
+------------------------------------------------------------
+New version 1.0-SNAPSHOT build 0.0.0.24
+Date: Fri Jan 13 10:48:10 MSK 2017
+Change files from: Fri Jan 13 10:46:11 MSK 2017
+- main/webapp/WEB-INF/spring-security.xml
+
+------------------------------------------------------------
+New version 1.0-SNAPSHOT build 0.0.0.25
+Date: Fri Jan 13 11:48:59 MSK 2017
+Change files from: Fri Jan 13 10:48:10 MSK 2017
+- main/webapp/WEB-INF/web.xml
+- main/webapp/WEB-INF/dispatcher-servlet.xml
+- main/webapp/WEB-INF/spring-security.xml
+- main/resources/log4j.properties
+
+------------------------------------------------------------
+New version 1.0-SNAPSHOT build 0.0.0.26
+Date: Fri Jan 13 11:49:52 MSK 2017
+Change files from: Fri Jan 13 11:48:59 MSK 2017

@@ -4,20 +4,18 @@
 
 <%
     String path = (String) request.getAttribute("PATH");
-    request.setAttribute("DELETE_URL", path + PageList.RIDDLE_DELETE);
-    request.setAttribute("LIST_URL", path + PageList.WORKSHOP);
+    request.setAttribute("LIST_URL", path + PageList.PAGE_WORKSHOP);
 %>
 
 <t:wrapper>
 
-    <t:alert text="${error_message}"/>
+    <t:alertText text="${error_message}"/>
 
     <h1>Создание новой загадки</h1>
     <form method="post">
         <div class="form-group">
             <label for="title">Название загадки</label>
-            <input type="text" name="title" value="${title}" class="form-control" id="title"
-                   placeholder="Название загадки"/>
+            <input type="text" name="title" value="${title}" class="form-control" id="title" placeholder="Название загадки"/>
         </div>
 
         <div class="form-group">
@@ -33,8 +31,7 @@
 
         <div class="form-group">
             <label for="answers">Ответ на загадку</label>
-            <input type="text" name="answer" value="${answer_text}" class="form-control" id="answers"
-                   placeholder="Ответ на загадку"/>
+            <input type="text" name="answer" value="${answer_text}" class="form-control" id="answers" placeholder="Ответ на загадку"/>
             <blockquote>
                 Если правильных ответов на загадку несколько, укажите их через запятую.<br/>
                 При сохранении ответов будут проигнорированы: регистр букв, двойные пробелы и пробелы на концах.
@@ -42,9 +39,6 @@
         </div>
 
         <button type="button" class="btn btn-default" onclick="location.href='${LIST_URL}';">Отмена</button>
-        <button type="submit" class="btn btn-success">Сохранить</button>
-        <button type="button" class="btn btn-danger"
-                onclick="if(confirm('Хотите удалить загадку?')) location.href='${DELETE_URL}/${riddle_id}';">Удалить
-        </button>
+        <button type="submit" class="btn btn-success">Создать</button>
     </form>
 </t:wrapper>

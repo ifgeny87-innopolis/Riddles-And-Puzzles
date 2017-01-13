@@ -31,10 +31,17 @@ public class DatabaseManager
 			try {
 				ic = new InitialContext();
 				ds = (DataSource) ic.lookup("java:comp/env/jdbc/db");
-				connection = ds.getConnection();
 			} catch (Exception e) {
 				log.error("Не смогла программа прочиать настройку DataSource:\n" + e.getMessage(), e);
 			}
+		}
+
+		public static Connection getConnection() throws SQLException
+		{
+			if(connection == null || connection.isClosed()) {
+				connection = ds.getConnection();
+			}
+			return connection;
 		}
 	}
 
@@ -44,9 +51,9 @@ public class DatabaseManager
 	 * @return Объект Connection
 	 * @throws SQLException Ошибка соединения с БД
 	 */
-	public static Connection getConnection() throws DbConnectException
+	public static Connection getConnection() throws DbConnectException, SQLException
 	{
-		if (LazyConnection.connection == null) {
+		if (LazyConnection.getConnection() == null) {
 			throw new DbConnectException("Не удается подключиться в СУБД");
 		}
 		return LazyConnection.connection;

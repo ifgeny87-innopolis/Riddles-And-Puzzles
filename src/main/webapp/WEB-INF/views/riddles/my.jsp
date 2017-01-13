@@ -9,9 +9,9 @@
 
 <%
     String path = (String) request.getAttribute("PATH");
-    request.setAttribute("CREATE_URL", path + PageList.RIDDLE_CREATE);
-    request.setAttribute("EDIT_URL", path + PageList.RIDDLE_EDIT);
-    request.setAttribute("LIST_URL", path + PageList.WORKSHOP);
+    request.setAttribute("CREATE_URL", path + PageList.PAGE_RIDDLE_CREATE);
+    request.setAttribute("EDIT_URL", path + PageList.PAGE_RIDDLE_EDIT);
+    request.setAttribute("LIST_URL", path + PageList.PAGE_WORKSHOP);
 %>
 
 <t:wrapper>
@@ -21,8 +21,8 @@
         <a class="btn btn-default" href="${CREATE_URL}">Создать</a>
     </div>
 
-    <t:alert text="${success_message}" type="success"/>
-    <t:alert text="${error_message}"/>
+    <t:alertText text="${success_message}" type="success"/>
+    <t:alertText text="${error_message}"/>
 
     <c:if test="${not empty riddles}">
         <table class="table">

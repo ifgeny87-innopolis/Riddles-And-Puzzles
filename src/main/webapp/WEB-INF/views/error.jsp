@@ -5,23 +5,22 @@
     request.setAttribute("PATH", request.getContextPath());
 
     // Проверяю, правильно ли указали код и номер ошибки
-    Object message = request.getAttribute("error_message");
-    if(message == null || message == "" || !(message instanceof String)) {
-    	message = "";
-    }
-    request.setAttribute("error_message1", message);
-
     Object code = request.getAttribute("error_code");
-    message = (code == null || !(code instanceof Integer))
+    if (code != null) {
+        response.setStatus(new Integer(code.toString()));
+    }
+    String code_text = (code == null || !(code instanceof Integer))
             ? "Произошла неизвестная ошибка"
             : "Была вызвана ошибка #" + code.toString();
-    request.setAttribute("error_code1", message);
+    request.setAttribute("code_text", code_text);
 %>
 
 <t:wrapper>
-    <h1>${requestScope.error_code1}</h1>
+    <h1>${requestScope.code_text}</h1>
 
-    <t:alert text="${requestScope.error_message1}"/>
+    <t:alertText text="${error_message}"/>
+
+    <t:alertException/>
 
     <p>
         Мы уже влотную занялись этой ошибкой. Но вы все равно можете принять участие и сообщить нам об ошибке по

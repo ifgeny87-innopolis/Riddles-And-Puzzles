@@ -2,208 +2,139 @@ package ru.rap.controllers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
+import org.springframework.util.ClassUtils;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.servlet.ModelAndView;
 import ru.rap.common.Messages;
 import ru.rap.common.exceptions.DaoException;
 import ru.rap.common.exceptions.DbConnectException;
 import ru.rap.models.User;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 
-import static ru.rap.common.PageList.ERROR_PAGE_JSP;
+import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static ru.rap.common.PageList.PAGE_ERROR;
 
 /**
  * Created in project RiddlesAndPuzzles in 26.12.2016
  */
-public abstract class BaseController extends HttpServlet
+public abstract class BaseController
 {
 	// logger
 	private static final Logger log = LoggerFactory.getLogger(BaseController.class);
 
-	// Параметры запроса
-	protected HttpServletRequest req;   // request
-	protected HttpServletResponse res;  // response
-	protected String sessionId;         // номер сессии
-	protected User authUser;            // текущий авторизованный юзер
-	protected String path;              // корень приложения
+	protected String path;
+
+	protected HttpServletRequest request;
+
+	protected HttpServletResponse response;
+
+	protected Model model;
+
+	private String sessionId;
+
+	String getSessionId()
+	{
+		return sessionId;
+	}
+
+	protected User authUser;
 
 	/**
-	 * Инициализатор запрос
+	 * Инициализатор запроса
 	 * Запоминает Request и Response чтобы потом удобней было к ним обращаться.
 	 * Также запоминает sessionId, потому что с ним придется много работать.
 	 *
 	 * !!! Важно:
 	 * Если вызов не для контроллера класса UserController, то проверяет авторизацию.
-	 *
-	 * @param req
-	 * @param res
-	 * @return
 	 */
-	private boolean init(HttpServletRequest req, HttpServletResponse res) throws DbConnectException, DaoException
+	@ModelAttribute
+	public void init(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception
 	{
+		this.request = request;
+		this.response = response;
+		this.model = model;
+		this.sessionId = request.getRequestedSessionId();
+
 		// чтобы получить UTF-8 из request
 		// работает только для POST данных
 		try {
-			req.setCharacterEncoding("UTF-8");
+			request.setCharacterEncoding("UTF-8");
 		} catch (UnsupportedEncodingException e) {
 			log.error("Сорвалась настройка кодировки для объекта Request:\n" + e.getMessage(), e);
 		}
 
-		this.req = req;
-		this.res = res;
-		this.sessionId = req.getRequestedSessionId();
-
 		// корень приложения
-		req.setAttribute("PATH", this.path = req.getContextPath());
+		request.setAttribute("PATH", this.path = request.getContextPath());
 
 		// если это не класс UserController, проверка авторизации
-		if (this.getClass() != UserController.class) {
+		if (this.getClass() != UserController.class && this.getClass() != IndexController.class) {
 			if (!UserController.isUserAuth(sessionId)) {
-				forwardError(403, Messages.ERR_ACCESS_DENIED);
-				return false;
+				reportError(403, Messages.ERR_ACCESS_DENIED);
+				throw new Exception();
 			} else {
 				// запоминаю авторизованного
 				this.authUser = UserController.getUserAuth(sessionId);
 				// запишу сразу в атрибуты
-				req.setAttribute("authUser", authUser);
+				request.setAttribute("authUser", authUser);
 			}
 		}
-		return true;
 	}
 
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException
+	protected final String redirectTo(String page_name)
 	{
-		try {
-			if (init(req, res))
-				doGet();
-		} catch (DaoException | DbConnectException e) {
-			log.error("Сорвалась обработка GET запроса:\n" + e.getMessage(), e);
-			forwardError(e);
-		}
+		return "redirect:/" + page_name;
 	}
 
-	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException
+	protected final void reportError(int statusCode, int errorCode)
 	{
-		try {
-			if (init(req, res))
-				doPost();
-		} catch (DaoException | DbConnectException e) {
-			log.error("Сорвалась обработка POST запроса:\n" + e.getMessage(), e);
-			forwardError(e);
-		}
+		model.addAttribute("status_code", statusCode);
+		model.addAttribute("error_message", Messages.get(errorCode));
 	}
 
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	//  COMMON
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-
-	/**
-	 * По быстрому читает параметр
-	 *
-	 * @param name
-	 * @return
-	 */
-	protected String param(String name)
+	protected final String reportAndForwardError(Exception e)
 	{
-		return req.getParameter(name);
+		model.addAttribute("error_code", 500);
+
+		int code;
+
+		if (e instanceof DaoException)
+			code = Messages.ERR_SERVER_CATCH;
+		else if (e instanceof DbConnectException)
+			code = Messages.ERR_DATABASE_CONNECTION;
+		else
+			code = Messages.ERR_SERVER_CATCH;
+
+		reportError(500, code);
+
+		return PAGE_ERROR;
 	}
 
-	/**
-	 * Redirect на другой url
-	 *
-	 * @param url
-	 */
-	protected void redirect(String url)
+	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(Exception.class)
+	public ModelAndView handleException(Exception ex)
 	{
-		try {
-			res.sendRedirect(url);
-		} catch (IOException e) {
-			log.error("[*] Очень редкая ошибка! Ловите ее! Вот причина:\n" + e.getMessage(), e);
-			// что-то случилось, и даже пользователю не сообщить
-			// Халк грустный :(
-		}
+		Map<String, Object> model = new HashMap<>();
+		model.put("exception_class", ex.getClass());
+		model.put("exception_message", ex.getMessage());
+		model.put("exception_trace", Arrays
+				.stream(ex.getStackTrace())
+				.map(t -> "call <b>" + t.getMethodName() + "</b> from <i>" + t.getFileName() + ":" + t.getLineNumber() + "</i>")
+				.collect(Collectors.joining("<br/>"))
+				.toString());
+		return new ModelAndView("error", model);
 	}
-
-	/**
-	 * Forward на другой url
-	 *
-	 * @param url
-	 */
-	protected void forward(String url)
-	{
-		try {
-			req.getRequestDispatcher(url).forward(req, res);
-		} catch (ServletException | IOException e) {
-			log.error("[*] Еще одна редкая ошибка! А причина вот какая:\n" + e.getMessage(), e);
-			// что-то случилось, и даже пользователю не сообщить
-			// Халк грустный :(
-		}
-	}
-
-	/**
-	 * Выполняет forward на страницу ошибки
-	 *
-	 * @param code
-	 * @param message
-	 */
-	protected void forwardError(int code, String message)
-	{
-		res.setStatus(code);
-		req.setAttribute("error_code", code);
-		req.setAttribute("error_message", message);
-
-		forward(ERROR_PAGE_JSP);
-	}
-
-	/**
-	 * Такой же метод, но умеет определяеть текст ошибки по индексу
-	 *
-	 * @param code
-	 * @param errorIndex
-	 */
-	protected void forwardError(int code, int errorIndex)
-	{
-		forwardError(code, Messages.get(errorIndex));
-	}
-
-	/**
-	 * Forward на страницу ошибки по типу исключения
-	 *
-	 * @param e
-	 */
-	protected void forwardError(Exception e)
-	{
-		if (e instanceof DbConnectException) {
-			forwardError(500, Messages.ERR_DATABASE_CONNECTION);
-		} else if (e instanceof DaoException) {
-			forwardError(500, Messages.ERR_DATABASE_QUERY_EXECUTION);
-		} else{
-			forwardError(500, Messages.ERR_SERVER_CATCH);
-		}
-	}
-
-	/**
-	 * Преопределенный метод перехода на страницу ошибки:
-	 * -- "Вызван неизвестный метод" --
-	 *
-	 * @param cmd
-	 */
-	protected void forwardErrorUnknownMethod(String cmd)
-	{
-		forwardError(405, Messages.format(Messages.ERR_UNKNOWN_METHOD, cmd));
-	}
-
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	//  ABSTRACT
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-
-	protected abstract void doPost();
-
-	protected abstract void doGet();
 }

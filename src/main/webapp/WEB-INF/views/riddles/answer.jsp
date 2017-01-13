@@ -3,12 +3,12 @@
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%
     String path = (String) request.getAttribute("PATH");
-    request.setAttribute("LIST_URL", path + PageList.RIDDLES);
+    request.setAttribute("LIST_URL", path + PageList.PAGE_RIDDLES);
 %>
 <t:wrapper>
 
-    <t:alert text="${wrong_message}" type="warning"/>
-    <t:alert text="${error_message}"/>
+    <t:alertText text="${wrong_message}" type="warning"/>
+    <t:alertText text="${error_message}"/>
 
     <h1>${title}</h1>
 

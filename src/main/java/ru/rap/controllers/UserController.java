@@ -2,138 +2,127 @@ package ru.rap.controllers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import ru.rap.common.Messages;
-import ru.rap.common.PageList;
-import ru.rap.common.exceptions.DbConnectException;
 import ru.rap.common.exceptions.DaoException;
+import ru.rap.common.exceptions.DbConnectException;
 import ru.rap.models.User;
 import ru.rap.services.UserService;
 
-import javax.servlet.annotation.WebServlet;
+import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import static ru.rap.common.PageList.INDEX_JSP;
+import static ru.rap.common.PageList.*;
 
 /**
  * Сервлет-контроллер для работы с пользователями
  *
  * Created in project RiddlesAndPuzzles in 24.12.2016
  */
-@WebServlet(urlPatterns = {"/user"})
+@Controller
+@RequestMapping(PAGE_USER)
 public class UserController extends BaseController
 {
 	// logger
 	private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
-	// Service
-	private static UserService userService = UserService.getInstance();
+	// services
+	private static final UserService userService = UserService.getInstance();
 
-	@Override
-	protected void doPost()
-	{
-		// в queryString хранится название метода
-		String cmd = req.getParameter("method");
-		if ("register".equals(cmd)) {
-			// пользователь желает зарегистрироваться
-			doRegister(param("regEmail"), param("regPwd"));
-		} else if ("auth".equals(cmd)) {
-			// пользователь желает авторизоваться
-			doAuth(param("authEmail"), param("authPwd"));
-		} else {
-			// неизвестный метод
-			forwardErrorUnknownMethod(cmd);
-		}
-	}
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
+	//  CONTROLLER METHODS
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 
-	@Override
-	protected void doGet()
-	{
-		// в queryString хранится команда
-		String cmd = req.getParameter("method");
-		if ("exit".equals(cmd)) {
-			// пользователь желает выйти из системы
-			doExit();
-		} else {// неизвестный метод
-			forwardErrorUnknownMethod(cmd);
-		}
-	}
-
-	/**
-	 * Регистрация нового пользователя в ИС
-	 *
-	 * @param name     Имя нового пользователя
-	 * @param password RAW Пароль нового пользователя
-	 */
-	private void doRegister(String name, String password)
+	@RequestMapping(value = "register", method = RequestMethod.POST)
+	public String register(
+			@RequestParam String regEmail,
+			@RequestParam String regPwd
+	)
 	{
 		// пробую создать нового пользователя
-		int result;
+		int resCode;
 		try {
-			result = userService.registerUser(name, password);
+			resCode = userService.registerUser(regEmail, regPwd);
 		} catch (DaoException | DbConnectException e) {
 			log.error(e.getMessage(), e);
-			forwardError(500, (e instanceof DaoException)
-					? Messages.ERR_SERVER_CATCH
-					: Messages.ERR_DATABASE_CONNECTION);
-			return;
+			return reportAndForwardError(e);
 		}
 
-		if (result != 0) {
+		if (resCode != 0) {
 			// не удалось создать пользователя
-			req.setAttribute("register_err", Messages.get(result));
-			forward(INDEX_JSP);
-			return;
+			model.addAttribute("error_message", Messages.get(resCode));
+			return PAGE_INDEX;
 		}
 
 		// чтобы пользователь не тратил время на вход, сразу авторизую его
-		doAuth(name, password);
+		return doAuth(regEmail, regPwd);
 	}
+
+	@RequestMapping(value = "auth", method = RequestMethod.POST)
+	public String auth(
+			@RequestParam String authEmail,
+			@RequestParam String authPwd,
+			HttpServletResponse response,
+			Model model
+	)
+	{
+		this.response = response;
+		this.model = model;
+		return doAuth(authEmail, authPwd);
+	}
+
+	@RequestMapping("exit")
+	public String exit()
+	{
+		userService.exitUser(getSessionId());
+
+		// сбрасываю sessionId
+		request.changeSessionId();
+
+		// вышел или не вышел, не важно, отправляю его на домашнюю
+		return PAGE_INDEX;
+	}
+
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
+	//  ACTIONS
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 
 	/**
 	 * Авторизация пользователя в ИС
 	 *
-	 * @param name     Имя пользователя
-	 * @param password RAW Пароль пользователя
+	 * @param authEmail email пользователя
+	 * @param authPwd   RAW пароль пользователя
 	 */
-	private void doAuth(String name, String password)
+	private String doAuth(String authEmail, String authPwd)
 	{
 		// пробую авторизовать пользователя
-		int result;
+		int resCode;
 		try {
-			result = userService.authUser(sessionId, name, password);
+			resCode = userService.authUser(getSessionId(), authEmail, authPwd);
 		} catch (DaoException | DbConnectException e) {
 			log.error(e.getMessage(), e);
-			forwardError(e);
-			return;
+			return reportAndForwardError(e);
 		}
 
-		if (result != 0) {
+		if (resCode != 0) {
 			// не удалось авторизоваться
-			req.setAttribute("register_err", Messages.get(result));
-			forward(INDEX_JSP);
-			return;
+			model.addAttribute("error_message", Messages.get(resCode));
+			return PAGE_INDEX;
 		}
 
-		// else (result == 0)
 		// пользователь авторизован, отправляю его на страницу списка задач
-		redirect(path + PageList.RIDDLES);
-	}
-
-	/**
-	 * Выход пользователя
-	 */
-	private void doExit()
-	{
-		userService.exitUser(sessionId);
-
-		// сбрасываю sessionId
-		req.changeSessionId();
-
-		// вышел или не вышел, не важно, отправляю его на домашнюю
-		redirect(path + INDEX_JSP);
+		return redirectTo(PAGE_RIDDLES);
 	}
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	//  STATIC METHODS HERE
+	//  STATIC METHODS
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 
 	/**
@@ -145,7 +134,8 @@ public class UserController extends BaseController
 	 */
 	public static boolean isUserAuth(String sessionId)
 	{
-		return userService.isUserAuth(sessionId);
+		boolean flag = userService.isUserAuth(sessionId);
+		return flag;
 	}
 
 	/**
@@ -157,6 +147,7 @@ public class UserController extends BaseController
 	 */
 	static User getUserAuth(String sessionId) throws DbConnectException, DaoException
 	{
-		return userService.getUserAuth(sessionId);
+		User user = userService.getUserAuth(sessionId);
+		return user;
 	}
 }

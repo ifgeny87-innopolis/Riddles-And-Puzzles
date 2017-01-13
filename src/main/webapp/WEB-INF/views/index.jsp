@@ -4,24 +4,16 @@
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 
 <%
-    // Проверка авторизации
-    if(UserController.isUserAuth(request.getRequestedSessionId())) {
-        request.getRequestDispatcher(PageList.RIDDLES).forward(request, response);
-    }
-
-    // ни один контроллер не вызывается перед этой страницей
-    // поэтому надо назначить PATH
-    String path = request.getContextPath();
+    String path = request.getContextPath() + "/";
     request.setAttribute("PATH", path);
-
-    request.setAttribute("REGISTER_URL", path + PageList.REGISTER);
-    request.setAttribute("AUTH_URL", path + PageList.AUTH);
+    request.setAttribute("REGISTER_URL", path + PageList.PAGE_REGISTER);
+    request.setAttribute("AUTH_URL", path + PageList.PAGE_AUTH);
 %>
 
 <t:wrapper>
     <h1>Добро пожаловать в систему управления ребусами и загадками</h1>
 
-    <t:alert text="${requestScope.register_err}"/>
+    <t:alertText text="${error_message}"/>
 
     <div class="row">
 
