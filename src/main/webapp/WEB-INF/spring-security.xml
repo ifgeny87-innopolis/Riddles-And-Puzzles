@@ -10,8 +10,16 @@
     <http auto-config="true">
         <intercept-url pattern="/riddles**" access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')"/>
         <intercept-url pattern="/admin**" access="hasRole('ROLE_ADMIN')"/>
-        <form-login/>
-        <logout/>
+        <form-login
+                login-page="/login"
+                default-target-url="/"
+                login-processing-url="/j_spring_security_check"
+                authentication-failure-url="/login?error"
+                username-parameter="username"
+                password-parameter="password"/>
+        <logout logout-success-url="/login?logout"
+                logout-url="/j_spring_security_logout"/>
+        <csrf/>
     </http>
 
     <authentication-manager>

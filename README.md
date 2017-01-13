@@ -8,7 +8,15 @@
 
 ## Changelog
 
+### Версия 0.0.0.27
+
+К basic-авторизации добавил свою форму
+
 ### Версия 0.0.0.26
+
+Добавил basic-авторизацию
+
+Изучаю следующие ссылки
 
 1. http://www.mkyong.com/spring-security/spring-security-hello-world-example/
 2. http://www.mkyong.com/spring-security/spring-security-form-login-example/

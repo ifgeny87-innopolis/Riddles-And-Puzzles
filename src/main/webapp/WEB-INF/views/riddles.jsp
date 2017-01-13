@@ -9,8 +9,22 @@
 %>
 
 <t:wrapper>
+    <form action="<c:url value='/j_spring_security_logout' />" method="POST" id="logoutForm">
+        <input type="hidden"
+               name="${_csrf.parameterName}"
+               value="${_csrf.token}"/>
+    </form>
+
+    <script>
+        function formSubmit() {
+            document.getElementById("logoutForm").submit();
+        }
+    </script>
+
     <c:if test="${pageContext.request.userPrincipal.name != null}">
-        <h2>Welcome : ${pageContext.request.userPrincipal.name}</h2>
+        <h2>Welcome : ${pageContext.request.userPrincipal.name}
+            |
+            <a href="javascript:formSubmit()">Logout</a></h2>
     </c:if>
 
     <h1>Список загадок и ребусов</h1>

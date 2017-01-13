@@ -298,3 +298,13 @@ Change files from: Fri Jan 13 10:48:10 MSK 2017
 New version 1.0-SNAPSHOT build 0.0.0.26
 Date: Fri Jan 13 11:49:52 MSK 2017
 Change files from: Fri Jan 13 11:48:59 MSK 2017
+
+------------------------------------------------------------
+New version 1.0-SNAPSHOT build 0.0.0.27
+Date: Fri Jan 13 14:07:34 MSK 2017
+Change files from: Fri Jan 13 11:49:52 MSK 2017
+- main/webapp/WEB-INF/views/login.jsp
+- main/webapp/WEB-INF/views/riddles.jsp
+- main/webapp/WEB-INF/spring-security.xml
+- main/java/ru/rap/controllers/IndexController.java
+- main/resources/log4j.properties
