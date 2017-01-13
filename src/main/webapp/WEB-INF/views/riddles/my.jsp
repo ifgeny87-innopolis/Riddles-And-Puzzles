@@ -11,7 +11,7 @@
     String path = (String) request.getAttribute("PATH");
     request.setAttribute("CREATE_URL", path + PageList.PAGE_RIDDLE_CREATE);
     request.setAttribute("EDIT_URL", path + PageList.PAGE_RIDDLE_EDIT);
-    request.setAttribute("LIST_URL", path + PageList.PAGE_WORKSHOP);
+    request.setAttribute("LIST_URL", path + PageList.PAGE_RIDDLE_MINE);
 %>
 
 <t:wrapper>

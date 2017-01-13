@@ -5,7 +5,7 @@
 <%
     String path = (String) request.getAttribute("PATH");
     request.setAttribute("DELETE_URL", path + PageList.PAGE_RIDDLE_DELETE);
-    request.setAttribute("LIST_URL", path + PageList.PAGE_WORKSHOP);
+    request.setAttribute("LIST_URL", path + PageList.PAGE_RIDDLE_MINE);
 %>
 
 <t:wrapper>
