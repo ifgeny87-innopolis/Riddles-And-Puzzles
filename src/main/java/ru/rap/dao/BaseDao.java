@@ -163,7 +163,7 @@ public abstract class BaseDao<T>
 	 * @throws DaoException
 	 * @throws DbConnectException
 	 */
-	public List<T> select(String condition, Object... args) throws DaoException, DbConnectException
+	public List<T> select(String condition, Object...args) throws DaoException, DbConnectException
 	{
 		String sql = getSelectTmp() + " " + condition;
 		try (PreparedStatement ps = DatabaseManager.prepareStatement(sql)) {
@@ -202,7 +202,7 @@ public abstract class BaseDao<T>
 	 */
 	public List<T> selectBy(String field, Object arg) throws DaoException, DbConnectException
 	{
-		return select("WHERE " + field + "=?", arg);
+		return select("WHERE " + field + "=?", new Object[]{arg});
 	}
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>

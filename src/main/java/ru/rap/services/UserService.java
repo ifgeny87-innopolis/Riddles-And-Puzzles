@@ -2,6 +2,8 @@ package ru.rap.services;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 import ru.rap.common.Messages;
 import ru.rap.common.exceptions.DaoException;
 import ru.rap.common.exceptions.DbConnectException;
@@ -10,6 +12,7 @@ import ru.rap.libraries.HashLibrary;
 import ru.rap.models.User;
 
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -25,53 +28,20 @@ public class UserService extends BaseService<User>
 	private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
 	@Override
-	Logger getLogger() { return log;}
+	protected Logger getLogger() { return log;}
 
-	// для дебага в основном, нужно ли выполнять авто-вход
-	private static boolean ENABLE_AUTO_AUTH = true;
+	// нужно ли выполнять авто-вход
+	// эта опция для дебага в основном
+	private static boolean ENABLE_AUTO_AUTH = false;
 
-	// Singleton
-	private UserService() {}
-
-	private static class LazySingleton
-	{
-		private static UserService instance = new UserService();
-	}
-
-	public static UserService getInstance()
-	{
-		return LazySingleton.instance;
-	}
-
-	// DAO
-	private static UserDao dao = UserDao.getInstance();
+	@Autowired
+	private UserDao dao;
 
 	@Override
-	UserDao getDao() { return dao;}
+	protected UserDao getDao() { return dao;}
 
 	// Карта авторизации
 	private static Map<String, UUID> authUserMap = new HashMap<>();
-
-	/**
-	 * Получает существующий объект или создает новый
-	 * Но все равно возвращает объект
-	 * @param name
-	 * @return
-	 * @throws SQLException
-	 */
-	/*public User getOrCreate(String name) throws DaoException, DbConnectException
-	{
-		User user = dao.selectOneBy("name", name);
-		if (user != null)
-			return user;
-
-		// объект не найден, пробуем создать
-		return !save(new User(name))
-				? null
-				: dao.selectOneBy("name", name);
-	}*/
-
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 
 	/**
 	 * Регистрация нового пользователя
@@ -83,7 +53,7 @@ public class UserService extends BaseService<User>
 	 */
 	public int registerUser(String name, String password) throws DaoException, DbConnectException
 	{
-		User user = dao.selectOne("WHERE name=?", name);
+		User user = dao.selectOneBy("name", name);
 
 		if (user != null) {
 			return Messages.RES_USER_ALREADY_EXIST;
@@ -166,7 +136,7 @@ public class UserService extends BaseService<User>
 	}
 
 	/**
-	 * Возвращает авторизованного пользователя или ll
+	 * Возвращает авторизованного пользователя или null
 	 * Если ключ в карте авторизации есть, но пользователя уже нет, удаляет ключ из карты
 	 *
 	 * @param sessionId
@@ -192,6 +162,18 @@ public class UserService extends BaseService<User>
 		}
 
 		return user;
+	}
+
+	/**
+	 * Возвращает список ролей для пользователя
+	 *
+	 * @param user
+	 * @return
+	 * @throws DaoException
+	 */
+	public Collection<? extends GrantedAuthority> getUserRoles(User user) throws DaoException
+	{
+		return dao.getUserRoles(user);
 	}
 
 	/**

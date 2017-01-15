@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 /**
  * Сервис работы с отгадками
@@ -23,7 +24,7 @@ public class AnswerService extends BaseService<Answer>
 	private static final Logger log = LoggerFactory.getLogger(AnswerService.class);
 
 	@Override
-	Logger getLogger() { return log;}
+	protected Logger getLogger() { return log;}
 
 	// Singleton
 	private AnswerService() {}
@@ -42,7 +43,7 @@ public class AnswerService extends BaseService<Answer>
 	private static AnswerDao dao = AnswerDao.getInstance();
 
 	@Override
-	AnswerDao getDao() { return dao;}
+	protected AnswerDao getDao() { return dao;}
 
 	/**
 	 * Решил ли пользователь загадку
@@ -79,7 +80,7 @@ public class AnswerService extends BaseService<Answer>
 		String sql = "WHERE user_id='" + userId.toString() + "' AND (riddle_id=?" + new String(new char[riddleIds.length-1]).replace("\0", " OR riddle_id=?") + ")";
 
 		Map<UUID, Answer> result = new HashMap<>();
-		List<Answer> list = dao.select(sql, riddleIds);
+		List<Answer> list = dao.select(sql, Stream.of(riddleIds).toArray());
 		if(list == null)
 			return result;
 

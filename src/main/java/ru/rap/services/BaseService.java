@@ -15,9 +15,9 @@ public abstract class BaseService<T extends BaseModel>
 {
 	private BaseDao<T> dao = getDao();
 
-	abstract BaseDao<T> getDao();
+	protected abstract BaseDao<T> getDao();
 
-	abstract Logger getLogger();
+	protected abstract Logger getLogger();
 
 	/**
 	 * Выполняет вставку или обновление. Операция зависит от наличия значения id

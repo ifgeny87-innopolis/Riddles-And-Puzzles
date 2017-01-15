@@ -15,6 +15,7 @@ import ru.rap.common.Messages;
 import ru.rap.common.exceptions.DaoException;
 import ru.rap.common.exceptions.DbConnectException;
 import ru.rap.models.User;
+import ru.rap.policies.RapPrincipal;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -36,13 +37,16 @@ public abstract class BaseController
 	// logger
 	private static final Logger log = LoggerFactory.getLogger(BaseController.class);
 
-	protected String path;
+	@Autowired
+	UserController userController;
 
-	protected HttpServletRequest request;
+	private String path;
 
-	protected HttpServletResponse response;
+	HttpServletRequest request;
 
-	protected Model model;
+	HttpServletResponse response;
+
+	Model model;
 
 	private String sessionId;
 
@@ -50,8 +54,6 @@ public abstract class BaseController
 	{
 		return sessionId;
 	}
-
-	protected User authUser;
 
 	/**
 	 * Инициализатор запроса
@@ -79,19 +81,6 @@ public abstract class BaseController
 
 		// корень приложения
 		request.setAttribute("PATH", this.path = request.getContextPath());
-
-		// если это не класс UserController, проверка авторизации
-		if (this.getClass() != UserController.class && this.getClass() != IndexController.class) {
-			if (!UserController.isUserAuth(sessionId)) {
-				reportError(403, Messages.ERR_ACCESS_DENIED);
-				throw new Exception();
-			} else {
-				// запоминаю авторизованного
-				this.authUser = UserController.getUserAuth(sessionId);
-				// запишу сразу в атрибуты
-				request.setAttribute("authUser", authUser);
-			}
-		}
 	}
 
 	protected final String redirectTo(String page_name)
@@ -121,6 +110,15 @@ public abstract class BaseController
 		reportError(500, code);
 
 		return PAGE_ERROR;
+	}
+
+	/**
+	 * Получаем объект RapPrincipal для текущего авторизованного пользователя
+	 * @return
+	 */
+	public RapPrincipal getPrincipal()
+	{
+		return (RapPrincipal) request.getUserPrincipal();
 	}
 
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST)

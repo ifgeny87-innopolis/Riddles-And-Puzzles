@@ -2,6 +2,7 @@ package ru.rap.services;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.rap.common.Messages;
 import ru.rap.common.exceptions.DaoException;
 import ru.rap.common.exceptions.DbConnectException;
@@ -25,26 +26,16 @@ public class RiddleService extends BaseService<Riddle>
 	private static final Logger log = LoggerFactory.getLogger(RiddleService.class);
 
 	@Override
-	Logger getLogger() { return log;}
+	protected Logger getLogger() { return log;}
 
-	// Singleton
-	private RiddleService() {}
+	@Autowired
+	private RiddleDao dao;
 
-	private static class LazySingleton
-	{
-		private static RiddleService instance = new RiddleService();
-	}
-
-	public static RiddleService getInstance()
-	{
-		return LazySingleton.instance;
-	}
-
-	// DAO
-	private static RiddleDao dao = RiddleDao.getInstance();
+	@Autowired
+	private UserService userService;
 
 	@Override
-	RiddleDao getDao() { return dao;}
+	protected RiddleDao getDao() { return dao;}
 
 	/**
 	 * Вернет количество загадок, НЕ созданных указанным пользователем
@@ -291,7 +282,7 @@ public class RiddleService extends BaseService<Riddle>
 			AnswerService.getInstance().insert(user.getId(), riddle.getId(), answer, is_right);
 			// увеличиваю счетчик попыток и отгадок для самой загадки и пользователя
 			if (incTries(riddle, is_right) == 0
-					&& UserService.getInstance().incTries(user, is_right) == 0) {
+					&& userService.incTries(user, is_right) == 0) {
 				dao.commit();
 			} else {
 				throw new DaoException("Не удалось обновить счетчики");

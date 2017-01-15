@@ -33,8 +33,8 @@ public class UserController extends BaseController
 	// logger
 	private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
-	// services
-	private static final UserService userService = UserService.getInstance();
+	@Autowired
+	private UserService userService;
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 	//  CONTROLLER METHODS
@@ -132,7 +132,7 @@ public class UserController extends BaseController
 	 * @param sessionId Номер сессии
 	 * @return Флаг авторизации
 	 */
-	public static boolean isUserAuth(String sessionId)
+	public boolean isUserAuth(String sessionId)
 	{
 		boolean flag = userService.isUserAuth(sessionId);
 		return flag;
@@ -145,7 +145,7 @@ public class UserController extends BaseController
 	 * @param sessionId Номер сессии
 	 * @return Авторизованный пользователь
 	 */
-	static User getUserAuth(String sessionId) throws DbConnectException, DaoException
+	User getUserAuth(String sessionId) throws DbConnectException, DaoException
 	{
 		User user = userService.getUserAuth(sessionId);
 		return user;

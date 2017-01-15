@@ -2,14 +2,21 @@ package ru.rap.dao;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.GrantedAuthority;
 import ru.rap.common.exceptions.DaoException;
 import ru.rap.common.exceptions.DbConnectException;
+import ru.rap.libraries.DaoLibrary;
 import ru.rap.managers.DatabaseManager;
 import ru.rap.models.User;
+import ru.rap.roles.ROLE_ADMIN;
+import ru.rap.roles.ROLE_USER;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -175,4 +182,35 @@ public class UserDao extends BaseDao<User>
 	{
 		return super.equals(obj);
 	}
+
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
+	//  Выборки ассоциации
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
+
+	private static final String SELECT_ROLES_BY_USER_ID = "SELECT DISTINCT role FROM role2user WHERE user_id=?";
+
+	public Collection<? extends GrantedAuthority> getUserRoles(User pojo) throws DaoException
+	{
+		try (PreparedStatement ps = DatabaseManager.prepareStatement(SELECT_ROLES_BY_USER_ID)) {
+			DaoLibrary.mapStatement(ps, pojo.getId());
+			ResultSet rs = ps.executeQuery();
+
+			// создаю и заполняю список
+			List<GrantedAuthority> list = new ArrayList<>();
+			while (rs.next()) {
+				// FIXME: 12.01.17 заменить этот гк
+				String role = rs.getString(1);
+				if (role.toUpperCase().equals("ROLE_USER"))
+					list.add(new ROLE_USER());
+				else if (role.toUpperCase().equals("ROLE_ADMIN"))
+					list.add(new ROLE_ADMIN());
+			}
+			return list;
+		} catch (SQLException | DbConnectException e) {
+			String error = "Ошибка при операции INSERT:\n" + e.getMessage();
+			getLogger().error(error, e);
+			throw new DaoException(error, e);
+		}
+	}
+
 }

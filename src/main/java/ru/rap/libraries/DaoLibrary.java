@@ -19,7 +19,7 @@ public class DaoLibrary
 	 * @param args Список значений для сета
 	 * @throws SQLException Возможна ошибка
 	 */
-	public static void mapStatement(PreparedStatement ps, Object[] args) throws SQLException
+	public static void mapStatement(PreparedStatement ps, Object...args) throws SQLException
 	{
 		for (int i = 1; i <= args.length; ++i) {
 			Object o = args[i - 1];

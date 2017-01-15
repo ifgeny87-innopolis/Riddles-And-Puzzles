@@ -308,3 +308,43 @@ Change files from: Fri Jan 13 11:49:52 MSK 2017
 - main/webapp/WEB-INF/spring-security.xml
 - main/java/ru/rap/controllers/IndexController.java
 - main/resources/log4j.properties
+
+------------------------------------------------------------
+New version 1.0-SNAPSHOT build 0.0.0.28
+Date: Sun Jan 15 23:42:25 MSK 2017
+Change files from: Fri Jan 13 14:07:34 MSK 2017
+- main/webapp/WEB-INF/views/login.jsp
+- main/webapp/WEB-INF/views/index.jsp
+- main/webapp/WEB-INF/views/riddles/my.jsp
+- main/webapp/WEB-INF/views/riddles/create.jsp
+- main/webapp/WEB-INF/views/riddles/edit.jsp
+- main/webapp/WEB-INF/web.xml
+- main/webapp/WEB-INF/tags/wrapper.tag
+- main/webapp/WEB-INF/dispatcher-servlet.xml
+- main/webapp/WEB-INF/spring-security.xml
+- main/webapp/META-INF/context.xml
+- main/java/ru/rap/roles/ROLE_ADMIN.java
+- main/java/ru/rap/roles/ROLE_USER.java
+- main/java/ru/rap/services/BaseService.java
+- main/java/ru/rap/services/RiddleService.java
+- main/java/ru/rap/services/UserService.java
+- main/java/ru/rap/libraries/DaoLibrary.java
+- main/java/ru/rap/dao/UserDao.java
+- main/java/ru/rap/dao/BaseDao.java
+- main/java/ru/rap/controllers/BaseController.java
+- main/java/ru/rap/controllers/UserController.java
+- main/java/ru/rap/controllers/RiddleController.java
+- main/java/ru/rap/controllers/IndexController.java
+- main/java/ru/rap/policies/RapUserDetails.java
+- main/java/ru/rap/policies/RapUserDetailsService.java
+- main/java/ru/rap/policies/RapPasswordEncoder.java
+- main/java/ru/rap/policies/RapPrincipal.java
+- main/java/ru/rap/config/SecurityConfig.java
+- main/java/ru/rap/models/Riddle.java
+
+------------------------------------------------------------
+New version 1.0-SNAPSHOT build 0.0.0.29
+Date: Sun Jan 15 23:50:29 MSK 2017
+Change files from: Sun Jan 15 23:42:25 MSK 2017
+- main/java/ru/rap/services/AnswerService.java
+- main/java/ru/rap/dao/BaseDao.java
