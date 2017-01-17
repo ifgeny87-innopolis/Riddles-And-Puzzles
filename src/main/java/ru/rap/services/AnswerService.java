@@ -2,15 +2,14 @@ package ru.rap.services;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.rap.common.exceptions.DaoException;
 import ru.rap.common.exceptions.DbConnectException;
 import ru.rap.dao.AnswerDao;
+import ru.rap.libraries.StringLibrary;
 import ru.rap.models.Answer;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Stream;
 
 /**
@@ -26,21 +25,8 @@ public class AnswerService extends BaseService<Answer>
 	@Override
 	protected Logger getLogger() { return log;}
 
-	// Singleton
-	private AnswerService() {}
-
-	private static class LazySingleton
-	{
-		private static AnswerService instance = new AnswerService();
-	}
-
-	public static AnswerService getInstance()
-	{
-		return LazySingleton.instance;
-	}
-
-	// DAO
-	private static AnswerDao dao = AnswerDao.getInstance();
+	@Autowired
+	private AnswerDao dao;
 
 	@Override
 	protected AnswerDao getDao() { return dao;}
@@ -62,6 +48,7 @@ public class AnswerService extends BaseService<Answer>
 
 	/**
 	 * Добавляет новую запись в справочник
+	 *
 	 * @param user_id
 	 * @param riddle_id
 	 * @param answer
@@ -72,18 +59,26 @@ public class AnswerService extends BaseService<Answer>
 	 */
 	public boolean insert(UUID user_id, UUID riddle_id, String answer, boolean is_right) throws DbConnectException, DaoException
 	{
-		return dao.insert(new Answer(user_id,riddle_id,answer,is_right));
+		return dao.insert(new Answer(user_id, riddle_id, answer, is_right));
 	}
 
 	public Map<UUID, Answer> getFor(UUID userId, UUID... riddleIds) throws DbConnectException, DaoException
 	{
-		String sql = "WHERE user_id='" + userId.toString() + "' AND (riddle_id=?" + new String(new char[riddleIds.length-1]).replace("\0", " OR riddle_id=?") + ")";
+		String sql = "WHERE user_id=? AND is_right=1 AND riddle_id IN ("
+				+ StringLibrary.repeat("?", ",", riddleIds.length) + ")";
+
+		UUID[] args = new UUID[riddleIds.length + 1];
+		args[0] = userId;
+		for (int i = 0; i < riddleIds.length; i++) {
+			args[i + 1] = riddleIds[i];
+		}
+
+		List<Answer> list = dao.select(sql, args);
+
+		if (list == null)
+			return null;
 
 		Map<UUID, Answer> result = new HashMap<>();
-		List<Answer> list = dao.select(sql, Stream.of(riddleIds).toArray());
-		if(list == null)
-			return result;
-
 		list.forEach(a -> result.put(a.getRiddleId(), a));
 		return result;
 	}

@@ -8,6 +8,7 @@ import ru.rap.common.exceptions.DaoException;
 import ru.rap.common.exceptions.DbConnectException;
 import ru.rap.dao.RiddleDao;
 import ru.rap.models.Answer;
+import ru.rap.models.BaseModel;
 import ru.rap.models.Riddle;
 import ru.rap.models.User;
 import ru.rap.validators.StrValidator;
@@ -33,6 +34,9 @@ public class RiddleService extends BaseService<Riddle>
 
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private AnswerService answerService;
 
 	@Override
 	protected RiddleDao getDao() { return dao;}
@@ -62,25 +66,34 @@ public class RiddleService extends BaseService<Riddle>
 	 */
 	public Map<Riddle, Timestamp> getListNotOfUser(UUID userId, int start, int count) throws DaoException, DbConnectException
 	{
-		List<Riddle> r_ = dao.select("WHERE user_id<>? LIMIT ?,?", userId, start, count);
-		if(r_ == null)
+		List<Riddle> _riddles = dao.select("WHERE user_id<>? LIMIT ?,?",
+				userId, start, count);
+
+		if (_riddles == null)
 			return null;
 
-		// теперь для каждой загадки надо получить время и статус отгадки
-		UUID[] u_ = r_.stream().map(r -> r.getId()).toArray(UUID[]::new);
-		Map<UUID, Answer> answers = AnswerService.getInstance().getFor(userId, u_);
+		// для каждой загадки определяю:
+		// - отдагал ли ее указанный пользователь
+		// - когда он ее отгадал
+		UUID[] _uids;
+		_uids = _riddles
+				.stream()
+				.map(BaseModel::getId)
+				.toArray(UUID[]::new);
+
+		Map<UUID, Answer> answers = answerService.getFor(userId, _uids);
 
 		// список отгадок получен, разбираю
 		Map<Riddle, Timestamp> result = new HashMap<>();
-		for (Riddle r : r_) {
-			UUID rid = r.getId();
-			if(answers.containsKey(rid)) {
-				Answer a = answers.get(rid);
-				Timestamp t = a.getCreated();
-				result.put(r, t);
-			}
-			else {
-				result.put(r,null);
+
+		for (Riddle riddle : _riddles) {
+			UUID _riddleId = riddle.getId();
+			if (answers.containsKey(_riddleId)) {
+				Answer _answer = answers.get(_riddleId);
+				Timestamp _timestamp = _answer.getCreated();
+				result.put(riddle, _timestamp);
+			} else {
+				result.put(riddle, null);
 			}
 		}
 
@@ -279,7 +292,8 @@ public class RiddleService extends BaseService<Riddle>
 
 		try {
 			// добавляю отгадку
-			AnswerService.getInstance().insert(user.getId(), riddle.getId(), answer, is_right);
+			answerService.insert(user.getId(), riddle.getId(), answer, is_right);
+
 			// увеличиваю счетчик попыток и отгадок для самой загадки и пользователя
 			if (incTries(riddle, is_right) == 0
 					&& userService.incTries(user, is_right) == 0) {

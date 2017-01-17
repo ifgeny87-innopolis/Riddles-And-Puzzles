@@ -348,3 +348,20 @@ Date: Sun Jan 15 23:50:29 MSK 2017
 Change files from: Sun Jan 15 23:42:25 MSK 2017
 - main/java/ru/rap/services/AnswerService.java
 - main/java/ru/rap/dao/BaseDao.java
+
+------------------------------------------------------------
+New version 1.0-SNAPSHOT build 0.0.1.0
+Date: Tue Jan 17 20:11:23 MSK 2017
+Change files from: Sun Jan 15 23:50:29 MSK 2017
+- test/java/ArrayTest.java
+- main/webapp/WEB-INF/views/riddles/answer.jsp
+- main/webapp/WEB-INF/application.xml
+- main/webapp/WEB-INF/web.xml
+- main/webapp/WEB-INF/spring-security.xml
+- main/webapp/WEB-INF/spring-database.xml
+- main/java/ru/rap/services/RiddleService.java
+- main/java/ru/rap/services/AnswerService.java
+- main/java/ru/rap/libraries/StringLibrary.java
+- main/java/ru/rap/controllers/BaseController.java
+- main/java/ru/rap/controllers/RiddleController.java
+- main/java/ru/rap/policies/RapUserDetails.java

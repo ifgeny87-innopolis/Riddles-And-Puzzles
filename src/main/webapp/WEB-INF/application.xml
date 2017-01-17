@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- Dao beans -->
+    <bean class="ru.rap.dao.UserDao" id="userDao"/>
+    <bean class="ru.rap.dao.RiddleDao" id="riddleDao"/>
+    <bean class="ru.rap.dao.AnswerDao" id="answerDao"/>
+
+    <!-- Service beans -->
+    <bean class="ru.rap.services.UserService" id="userService"/>
+    <bean class="ru.rap.services.RiddleService" id="riddleService"/>
+    <bean class="ru.rap.services.AnswerService" id="answerService"/>
+
+    <!-- Policies beans -->
+    <bean class="ru.rap.policies.RapUserDetailsService" id="userDetailService"/>
+    <bean class="ru.rap.policies.RapPasswordEncoder" id="passwordEncoder"/>
+
+    <!-- Context scan -->
+    <context:component-scan base-package="ru.rap.dao"/>
+    <context:component-scan base-package="ru.rap.services"/>
+    <context:component-scan base-package="ru.rap.controllers"/>
+    <context:component-scan base-package="ru.rap.policies"/>
+</beans>
