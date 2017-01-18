@@ -1,4 +1,4 @@
-<%@ tag import="ru.rap.models.User" %>
+<%@ tag import="ru.rap.models.UserModel" %>
 <%@ tag import="ru.rap.common.PageList" %>
 <%@ tag description="Simple Wrapper Tag" pageEncoding="UTF-8" %>
 <%
@@ -17,7 +17,7 @@
 </head>
 <body>
 <%
-    User user = (User) request.getAttribute("authUser");
+    UserModel user = (UserModel) request.getAttribute("authUser");
     if (user != null) {
 %>
 <header class="container">

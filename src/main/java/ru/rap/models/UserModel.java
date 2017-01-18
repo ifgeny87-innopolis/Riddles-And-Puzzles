@@ -9,7 +9,7 @@ import java.util.UUID;
  *
  * Created in project RiddlesAndPuzzles in 23.12.2016
  */
-public class User extends BaseModel
+public class UserModel extends BaseModel
 {
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 	//  FIELDS
@@ -34,7 +34,7 @@ public class User extends BaseModel
 	//  CONSTRUCTORS
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-	public User(UUID id, String name, Date birth, String hash_password, int answer_count, int try_count)
+	public UserModel(UUID id, String name, Date birth, String hash_password, int answer_count, int try_count)
 	{
 		super(id);
 		this.name = name;

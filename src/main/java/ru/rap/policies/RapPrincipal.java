@@ -1,6 +1,6 @@
 package ru.rap.policies;
 
-import ru.rap.models.User;
+import ru.rap.models.UserModel;
 
 import javax.security.auth.Subject;
 import java.security.Principal;
@@ -10,9 +10,9 @@ import java.security.Principal;
  */
 public class RapPrincipal implements Principal
 {
-	private User user;
+	private UserModel user;
 
-	public User getUser()
+	public UserModel getUser()
 	{
 		return user;
 	}

@@ -1,11 +1,12 @@
 package ru.rap.policies;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import ru.rap.libraries.HashLibrary;
 
 /**
  * Created in project RiddlesAndPuzzles in 15.01.17
  */
-public class RapPasswordEncoder implements org.springframework.security.crypto.password.PasswordEncoder
+public class RapPasswordEncoder implements PasswordEncoder
 {
 
 	@Override

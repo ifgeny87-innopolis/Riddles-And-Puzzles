@@ -1,147 +1,87 @@
 package ru.rap.dao;
 
+import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.rap.common.exceptions.DaoException;
-import ru.rap.common.exceptions.DbConnectException;
-import ru.rap.libraries.DaoLibrary;
-import ru.rap.managers.DatabaseManager;
-import ru.rap.models.Answer;
+import ru.rap.entities.AnswerEntity;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.UUID;
+import java.util.List;
 
 /**
  * Управление данными справочника отгадок
  *
  * Created in project RiddlesAndPuzzles in 28.12.2016
  */
-public class AnswerDao extends BaseDao<Answer>
+public class AnswerDao extends BaseDao<AnswerEntity>
 {
 	// logger
 	private static final Logger log = LoggerFactory.getLogger(AnswerDao.class);
 
-	// Реализация Singleton
-	private AnswerDao() {}
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
+	//  PREPARE
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 
-	private static AnswerDao instance = new AnswerDao();
-
-	public static AnswerDao getInstance()
+	private Query<AnswerEntity> prepare(Session session, String condition, Object[] args)
 	{
-		return instance;
-	}
+		String sql = (condition != null)
+				? "from AnswerEntity"
+				: condition;
 
-	// Таблица
-	private static final String TABLE = "answer";
+		// create query
+		Query<AnswerEntity> query = session
+				.createQuery(sql, AnswerEntity.class);
 
-	// Шаблоны запросов
-	private static final String SELECT = "SELECT id, user_id, riddle_id, answer, is_right, time_create FROM " + TABLE;
-	private static final String INSERT = "INSERT INTO " + TABLE + " (user_id_bin, riddle_id_bin, answer, is_right) VALUES(unhex(?), unhex(?), ?, ?)";
+		// map args
+		if (condition != null) {
+			for (int i = 0; i < args.length; i++) {
+				query.setParameter(i + 1, args[i]);
+			}
+		}
 
-	@Override
-	Logger getLogger()
-	{
-		return log;
-	}
-
-	@Override
-	String getSource()
-	{
-		return TABLE;
-	}
-
-	@Override
-	String getSelectTmp()
-	{
-		return SELECT;
-	}
-
-	@Override
-	String getInsertTmp()
-	{
-		return INSERT;
-	}
-
-	@Override
-	String getUpdateTmp()
-	{
-		return null;
-	}
-
-	@Override
-	String getDeleteTmp()
-	{
-		return null;
+		return query;
 	}
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	//  INSERT - методы вставки данных
+	//  SELECT
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 
 	@Override
-	public boolean insert(Answer pojo) throws DaoException, DbConnectException
+	public int count(String condition, Object... args)
 	{
-		try (PreparedStatement ps = DatabaseManager.prepareStatement(INSERT)) {
-			ps.setString(1, DaoLibrary.getClearUuid(pojo.getUserId()));
-			ps.setString(2, DaoLibrary.getClearUuid(pojo.getRiddleId()));
-			ps.setString(3, pojo.getAnswer());
-			ps.setInt(4, pojo.getIsRight() ? 1 : 0);
-			log.trace("Insert ready: " + ps);
-
-			return ps.executeUpdate() > 0;
-		} catch (SQLException e) {
-			log.error(e.getMessage(), e);
-			throw new DaoException("Insert error: ", e);
+		try (Session session = sessionFactory.openSession()) {
+			return prepare(session, condition, args)
+					.getFetchSize();
 		}
 	}
 
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	//  UPDATE - методы обновления данных
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-
 	@Override
-	public boolean update(Answer pojo) throws DaoException, DbConnectException
+	public AnswerEntity selectOne(String condition, Object... args)
 	{
-		throw new DaoException("Запрещено обновлять отгадки");
-	}
-
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	//  DELETE - методы удаления данных
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-
-	@Override
-	public boolean delete(Answer pojo) throws DaoException
-	{
-		throw new DaoException("Запрещено удалять отгадки");
-	}
-
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	//  MAPPING - маппинг данных на новый объект
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-
-	@Override
-	public Answer mapRow(ResultSet rs) throws DaoException
-	{
-		try {
-			return new Answer(
-					// id
-					UUID.fromString(rs.getString(1)),
-					// user_id
-					UUID.fromString(rs.getString(2)),
-					// riddle_id
-					UUID.fromString(rs.getString(3)),
-					// answer
-					rs.getString(4),
-					// is_right
-					rs.getInt(5) != 0,
-					// created
-					rs.getTimestamp(6)
-			);
-		} catch (SQLException e) {
-			log.error(e.getMessage(), e);
-			throw new DaoException("Mapping error: ", e);
+		try (Session session = sessionFactory.openSession()) {
+			return prepare(session, condition, args)
+					.getSingleResult();
 		}
+	}
+
+	@Override
+	public AnswerEntity selectOneBy(String field, Object arg)
+	{
+		return selectOne(String.format("from AnswerEntity where %s=:value", field), arg);
+	}
+
+	@Override
+	public List<AnswerEntity> select(String condition, Object... args)
+	{
+		try (Session session = sessionFactory.openSession()) {
+			return prepare(session, condition, args)
+					.getResultList();
+		}
+	}
+
+	@Override
+	public List<AnswerEntity> selectBy(String field, Object arg)
+	{
+		return select(String.format("from AnswerEntity where %s=:value", field), arg);
 	}
 }

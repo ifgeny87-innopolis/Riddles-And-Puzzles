@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import ru.rap.common.exceptions.DaoException;
 import ru.rap.common.exceptions.DbConnectException;
 import ru.rap.dao.UserDao;
-import ru.rap.models.User;
+import ru.rap.models.UserModel;
 import ru.rap.services.UserService;
 
 /**
@@ -21,29 +21,17 @@ public class RapUserDetailsService implements UserDetailsService
 	private static final Logger log = LoggerFactory.getLogger(RapUserDetailsService.class);
 
 	@Autowired
-	private UserDao dao;
-
-	@Autowired
 	private UserService userService;
-
-	@Autowired
-	private RapPasswordEncoder passwordEncoder;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException
 	{
-		try {
-			User user = dao.selectOneBy("name", username);
-			if(user == null) {
-				// пользователь нихт
-				throw new UsernameNotFoundException(
-						String.format("User '%s' not found", username));
-			}
-			return new RapUserDetails(user, userService);
-		} catch (DaoException | DbConnectException e) {
-			log.error("Не смог получить пользователя '" + username + "'");
-			// что-то случилось
-			throw new UsernameNotFoundException("Error: " + e.getMessage(), e);
+		UserModel user = userService.getByName(username);
+		if (user == null) {
+			// пользователь нихт
+			throw new UsernameNotFoundException(
+					String.format("Пользователь по имени '%s' не найден", username));
 		}
+		return new RapUserDetails(user, userService);
 	}
 }

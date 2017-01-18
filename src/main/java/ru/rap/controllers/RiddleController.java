@@ -11,7 +11,8 @@ import ru.rap.common.Messages;
 import ru.rap.common.exceptions.DaoException;
 import ru.rap.common.exceptions.DbConnectException;
 import ru.rap.libraries.PagerLibrary;
-import ru.rap.models.Riddle;
+import ru.rap.models.RiddleModel;
+import ru.rap.models.UserModel;
 import ru.rap.services.AnswerService;
 import ru.rap.services.RiddleService;
 import ru.rap.services.UserService;
@@ -95,7 +96,7 @@ public class RiddleController extends BaseController
 	 * @param uuid_text Номер загадки в тексте
 	 * @return null или загадка
 	 */
-	private Riddle _getRiddle(String uuid_text) throws Exception
+	private RiddleModel _getRiddle(String uuid_text) throws Exception
 	{
 		try {
 			return riddleService.getRiddle(UUID.fromString(uuid_text));
@@ -134,7 +135,7 @@ public class RiddleController extends BaseController
 		pageIndex = Math.max(1, Math.min(pageCount, pageIndex));
 
 		// получаю список загадок не текущего пользователя с учетом пагинатора
-		Map<Riddle, Timestamp> riddles;
+		Map<RiddleModel, Timestamp> riddles;
 
 		try {
 			riddles = riddleService.getListNotOfUser(authUserId,
@@ -158,7 +159,7 @@ public class RiddleController extends BaseController
 	private String doAnswerRiddle(String uuid_text) throws Exception
 	{
 		// получаю загадку
-		Riddle riddle = _getRiddle(uuid_text);
+		RiddleModel riddle = _getRiddle(uuid_text);
 		if (riddle == null) {
 			request.setAttribute("error_message", "Загадка не существует. Возможно, украли инопланетяне.");
 			return PAGE_RIDDLES;
@@ -229,7 +230,7 @@ public class RiddleController extends BaseController
 		pageIndex = Math.max(1, Math.min(pageCount, pageIndex));
 
 		// получаю список загадок не текущего пользователя
-		List<Riddle> riddles;
+		List<RiddleModel> riddles;
 		try {
 			riddles = riddleService.getListOfUser(getPrincipalDetails().getUser().getId(),
 					(pageIndex - 1) * ITEMS_PER_PAGE,
@@ -293,7 +294,7 @@ public class RiddleController extends BaseController
 	private String doEditRiddle(String uuid_text) throws Exception
 	{
 		// получаю загадку
-		Riddle oldRiddle = _getRiddle(uuid_text);
+		RiddleModel oldRiddle = _getRiddle(uuid_text);
 		if (oldRiddle == null) return redirectTo(PAGE_RIDDLE_MINE);
 
 		// проверка доступа к загадке
@@ -352,7 +353,7 @@ public class RiddleController extends BaseController
 	private String doDeleteRiddle(String uuid_text) throws Exception
 	{
 		// получаю загадку
-		Riddle riddle = _getRiddle(uuid_text);
+		RiddleModel riddle = _getRiddle(uuid_text);
 		if (riddle == null)
 			return PAGE_RIDDLE_MINE;
 

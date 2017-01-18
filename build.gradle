@@ -11,14 +11,6 @@ repositories {
     mavenCentral()
 }
 
-configurations.all {
-    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-        if (details.requested.group == 'org.springframework') {
-            details.useVersion '4.3.5.RELEASE'
-        }
-    }
-}
-
 dependencies {
     // logging
     compile 'org.slf4j:slf4j-api:1.7.21'
@@ -40,17 +32,33 @@ dependencies {
     compile 'jstl:jstl:1.2'
 
     // Spring
-    compile 'org.springframework:spring-core:4.3.3.RELEASE'
-    compile 'org.springframework:spring-context:4.3.3.RELEASE'
-    compile 'org.springframework:spring-web:4.3.3.RELEASE'
-    compile 'org.springframework:spring-webmvc:4.3.3.RELEASE'
-    compile 'org.springframework:spring-jdbc:4.3.3.RELEASE'
-    
+    compile 'org.springframework:spring-core:4.3.5.RELEASE'
+    compile 'org.springframework:spring-context:4.3.5.RELEASE'
+    compile 'org.springframework:spring-web:4.3.5.RELEASE'
+    compile 'org.springframework:spring-webmvc:4.3.5.RELEASE'
+    compile 'org.springframework:spring-jdbc:4.3.5.RELEASE'
+    compile 'org.springframework:spring-orm:4.3.5.RELEASE'
+
     // Spring Security
     compile 'org.springframework.security:spring-security-web:4.2.1.RELEASE'
     compile 'org.springframework.security:spring-security-config:4.2.1.RELEASE'
     compile 'org.springframework.security:spring-security-taglibs:4.2.1.RELEASE'
     compile 'org.springframework.security:spring-security-core:4.2.1.RELEASE'
+
+    // Apache DBCP
+    compile 'org.apache.commons:commons-dbcp2:2.1'
+
+    // hibernate framework
+    compile 'org.hibernate:hibernate-core:5.2.5.Final'
+//    compile 'org.hibernate:hibernate-annotations:5.2.5.Final'
+
+    // hibernate library dependency
+    compile 'dom4j:dom4j:1.4.1'
+    
+    // Spring Hibernate, 10.01.2008
+//    compile 'org.springframework:spring-hibernate3:2.0.8'
+//    compile 'org.springframework:spring-hibernate3:4.2.1.RELEASE'
+
 }
 
 compileJava {

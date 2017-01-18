@@ -4,33 +4,42 @@ import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.rap.entities.RiddleEntity;
+import org.springframework.security.core.GrantedAuthority;
+import ru.rap.entities.RoleEntity;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 /**
- * Управление данными справочника загадок и ребусов
+ * Управление ролями
  *
- * Created in project RiddlesAndPuzzles in 25.12.2016
+ * Created in project RiddlesAndPuzzles in 18.01.2017
  */
-public class RiddleDao extends BaseDao<RiddleEntity>
+public class RoleDao extends BaseDao<RoleEntity>
 {
 	// logger
-	private static final Logger log = LoggerFactory.getLogger(RiddleDao.class);
+	private static final Logger log = LoggerFactory.getLogger(RoleDao.class);
+
+	public Collection<? extends GrantedAuthority> getRolesByUserId(UUID userId) {
+		List<GrantedAuthority> list = new ArrayList<>();
+		String sql = "from "
+	}
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 	//  PREPARE
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 
-	private Query<RiddleEntity> prepare(Session session, String condition, Object[] args)
+	private Query<RoleEntity> prepare(Session session, String condition, Object[] args)
 	{
 		String sql = (condition != null)
-				? "from RiddleEntity"
+				? "from RoleEntity"
 				: condition;
 
 		// create query
-		Query<RiddleEntity> query = session
-				.createQuery(sql, RiddleEntity.class);
+		Query<RoleEntity> query = session
+				.createQuery(sql, RoleEntity.class);
 
 		// map args
 		if (condition != null) {
@@ -56,7 +65,7 @@ public class RiddleDao extends BaseDao<RiddleEntity>
 	}
 
 	@Override
-	public RiddleEntity selectOne(String condition, Object... args)
+	public RoleEntity selectOne(String condition, Object... args)
 	{
 		try (Session session = sessionFactory.openSession()) {
 			return prepare(session, condition, args)
@@ -65,13 +74,13 @@ public class RiddleDao extends BaseDao<RiddleEntity>
 	}
 
 	@Override
-	public RiddleEntity selectOneBy(String field, Object arg)
+	public RoleEntity selectOneBy(String field, Object arg)
 	{
-		return selectOne(String.format("from RiddleEntity where %s=:value", field), arg);
+		return selectOne(String.format("from RoleEntity where %s=:value", field), arg);
 	}
 
 	@Override
-	public List<RiddleEntity> select(String condition, Object... args)
+	public List<RoleEntity> select(String condition, Object... args)
 	{
 		try (Session session = sessionFactory.openSession()) {
 			return prepare(session, condition, args)
@@ -80,8 +89,8 @@ public class RiddleDao extends BaseDao<RiddleEntity>
 	}
 
 	@Override
-	public List<RiddleEntity> selectBy(String field, Object arg)
+	public List<RoleEntity> selectBy(String field, Object arg)
 	{
-		return select(String.format("from RiddleEntity where %s=:value", field), arg);
+		return select(String.format("from RoleEntity where %s=:value", field), arg);
 	}
 }

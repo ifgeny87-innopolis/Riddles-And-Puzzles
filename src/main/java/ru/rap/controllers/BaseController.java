@@ -7,8 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
-import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -16,16 +14,12 @@ import org.springframework.web.servlet.ModelAndView;
 import ru.rap.common.Messages;
 import ru.rap.common.exceptions.DaoException;
 import ru.rap.common.exceptions.DbConnectException;
-import ru.rap.models.User;
-import ru.rap.policies.RapPrincipal;
 import ru.rap.policies.RapUserDetails;
 
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.UnsupportedEncodingException;
-import java.security.Principal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -126,16 +120,6 @@ public abstract class BaseController
 		UsernamePasswordAuthenticationToken principalToken = (UsernamePasswordAuthenticationToken)request.getUserPrincipal();
 
 		return (RapUserDetails)principalToken.getPrincipal();
-	}
-
-	/**
-	 * Список ролей авторизованного пользователя
-	 * @return
-	 */
-	public Collection<GrantedAuthority> getPrincipalAuthorities() {
-		UsernamePasswordAuthenticationToken principalToken = (UsernamePasswordAuthenticationToken)request.getUserPrincipal();
-
-		return principalToken.getAuthorities();
 	}
 
 	/**

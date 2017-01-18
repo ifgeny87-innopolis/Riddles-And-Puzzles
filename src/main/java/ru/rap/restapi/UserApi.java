@@ -1,6 +1,6 @@
 package ru.rap.restapi;
 
-import ru.rap.models.User;
+import ru.rap.models.UserModel;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -23,7 +23,7 @@ public class UserApi extends BaseApi {
 		}
 
 		// пробую получить или создать пользователя
-		User user = null;
+		UserModel user = null;
 
 		// если пользователь не вернулся, так и пишу
 		if (user == null) {

@@ -4,17 +4,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import ru.rap.common.Messages;
 import ru.rap.common.exceptions.DaoException;
 import ru.rap.common.exceptions.DbConnectException;
+import ru.rap.common.validators.PasswordValidator;
+import ru.rap.common.validators.UsernameValidator;
+import ru.rap.dao.RoleDao;
 import ru.rap.dao.UserDao;
+import ru.rap.entities.UserEntity;
 import ru.rap.libraries.HashLibrary;
-import ru.rap.models.User;
+import ru.rap.models.UserModel;
 
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -22,176 +25,90 @@ import java.util.UUID;
  *
  * Created in project RiddlesAndPuzzles in 23.12.2016
  */
-public class UserService extends BaseService<User>
+public class UserService extends BaseService<UserModel>
 {
-	// Logger
+	// logger
 	private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
-	@Override
-	protected Logger getLogger() { return log;}
-
-	// нужно ли выполнять авто-вход
-	// эта опция для дебага в основном
-	private static boolean ENABLE_AUTO_AUTH = false;
+	@Autowired
+	private UserDao userDao;
 
 	@Autowired
-	private UserDao dao;
+	private RoleDao roleDao;
 
-	@Override
-	protected UserDao getDao() { return dao;}
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
-	// Карта авторизации
-	private static Map<String, UUID> authUserMap = new HashMap<>();
+	@Autowired
+	private UsernameValidator usernameValidator;
+
+	@Autowired
+	private PasswordValidator passwordValidator;
 
 	/**
 	 * Регистрация нового пользователя
-	 *
-	 * @param name
-	 * @param password
-	 * @return
-	 * @throws SQLException
 	 */
-	public int registerUser(String name, String password) throws DaoException, DbConnectException
+	public int registerUser(String username, String password)
 	{
-		User user = dao.selectOneBy("name", name);
+		// валидация
+		if (!usernameValidator.validate(username)) {
+			return Messages.RES_USERNAME_INVALID;
+		}
+
+		if (!passwordValidator.validate(password)) {
+			return Messages.RES_PASSWORD_INVALID;
+		}
+
+		// проверяю наличие такого же имени
+		UserEntity user = userDao.selectOneBy("name", username);
 
 		if (user != null) {
 			return Messages.RES_USER_ALREADY_EXIST;
 		}
 
 		// хеширую пароль
-		String hash_password = HashLibrary.toMd5(password, name);
+		String hashPassword = passwordEncoder.encode(password);
 
 		// пользователь не существует, создаем
-		boolean ok;
-		try {
-			ok = dao.insert(new User(null, name, null,
-					hash_password, 0, 0));
-			dao.commit();
-		} catch (DaoException | DbConnectException e) {
-			log.error(e.getMessage(), e);
-			// делаю откат
-			dao.rollback();
-			throw e;
-		}
-
-		return (ok) ? 0 : -1;
-	}
-
-	/**
-	 * Выполняет авторизацию пользвоателя
-	 *
-	 * @param sessionId
-	 * @param name
-	 * @param password
-	 * @return
-	 * @throws SQLException
-	 */
-	public int authUser(String sessionId, String name, String password) throws DaoException, DbConnectException
-	{
-		// хеширую пароль
-		String hash_password = HashLibrary.toMd5(password, name);
-
-		// попробую найти пользователя
-		User user = dao.selectOne("WHERE name=? AND hash_password=?", name, hash_password);
-
-		if (user == null) {
-			return Messages.RES_USER_OR_PASSWORD_WRONG;
-		}
-
-		// такой пользователь есть, авторизуем
-		// просто по сессии маппим пользователя
-		authUserMap.put(sessionId, user.getId());
+		userDao.insert(new UserEntity()
+				.setName(username)
+				.setHashPassword(hashPassword));
 
 		return 0;
 	}
 
-	public void exitUser(String sessionId)
-	{
-		// TODO: 28.12.2016 ключ для автовхода
-		// если в рамках сессии пользователь вышел, то автовход выполняться больше не будет
-		ENABLE_AUTO_AUTH = false;
-
-		if (authUserMap.containsKey(sessionId))
-			authUserMap.remove(sessionId);
-	}
-
 	/**
-	 * Проверяет, существует ли запись об авторизации для пользоваеля
+	 * Возвращает модель для сущности
 	 *
-	 * @param sessionId
+	 * @param e
 	 * @return
 	 */
-	public boolean isUserAuth(String sessionId)
+	public UserModel getModel(UserEntity e)
 	{
-		// TODO: 28.12.2016 исключить автовход
-		// анормальное поведение - авто-вход
-		if (!authUserMap.containsKey(sessionId) && ENABLE_AUTO_AUTH) {
-			String autoUserId = "AE7F5659-CCE6-11E6-9652-3C077170ECDC";
-			authUserMap.put(sessionId, UUID.fromString(autoUserId));
-		}
+		return new UserModel(e.getUid(), e.getName(), e.getBirth(),
+				e.getHashPassword(), e.getAnswerCount(), e.getTryCount());
+	}
 
-		// нормальное поведение
-		return authUserMap.containsKey(sessionId);
+	public UserModel getByUid(UUID uid)
+	{
+		UserEntity e = userDao.selectOne("id", uid);
+		return getModel(e);
 	}
 
 	/**
-	 * Возвращает авторизованного пользователя или null
-	 * Если ключ в карте авторизации есть, но пользователя уже нет, удаляет ключ из карты
+	 * Поиск сущности по имени пользователя
 	 *
-	 * @param sessionId
+	 * @param username
 	 * @return
-	 * @throws SQLException
 	 */
-	public User getUserAuth(String sessionId) throws DaoException, DbConnectException
+	public UserModel getByName(String username)
 	{
-		UUID id = authUserMap.containsKey(sessionId)
-				? authUserMap.get(sessionId)
-				: null;
-
-		if (id == null)
-			return null;
-
-		User user = dao.selectOneBy("id", id.toString());
-
-		// сервис должен отслеживать авторизацию
-		// если сейчас user == null, значит юзер был удален после авторизации
-		// поэтому нужно удалить ключ из карты авторизации
-		if (user == null) {
-			authUserMap.remove(sessionId);
-		}
-
-		return user;
+		UserEntity e = userDao.selectOneBy("name", username);
+		return getModel(e);
 	}
 
-	/**
-	 * Возвращает список ролей для пользователя
-	 *
-	 * @param user
-	 * @return
-	 * @throws DaoException
-	 */
-	public Collection<? extends GrantedAuthority> getUserRoles(User user) throws DaoException
-	{
-		return dao.getUserRoles(user);
-	}
-
-	/**
-	 * Увеличивает количество попыток, а если указан флаг rightsToo,
-	 * то увеличивает количество решеных задач
-	 *
-	 * @param u         Пользователь
-	 * @param rightsToo Нужно ли увеличить счетчик решеных задач
-	 * @return 0 или номер ошибки
-	 * @throws DbConnectException
-	 * @throws DaoException
-	 */
-	public int incTries(User u, boolean rightsToo) throws DbConnectException, DaoException
-	{
-		int answer_count = u.getAnswerCount() + (rightsToo ? 1 : 0);
-		int try_count = u.getTryCount() + 1;
-
-		return dao.update(new User(u.getId(), u.getName(), u.getBirth(), u.getHashPassword(), answer_count, try_count)) ? 0 : -1;
+	public Collection<? extends GrantedAuthority> getUserRoles(UserModel user) {
+		return roleDao.getRolesByUserId(user.getId());
 	}
 
 }

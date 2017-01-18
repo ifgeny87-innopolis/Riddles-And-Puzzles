@@ -22,6 +22,9 @@ public class Messages
 	public static final int WRONG_RIDDLE_TITLE_LENGTH = 0x005;
 	public static final int WRONG_RIDDLE_TEXT_LENGTH = 0x006;
 	public static final int WRONG_RIDDLE_ANSWER_LENGTH = 0x007;
+	public static final int RES_USERNAME_INVALID = 0x008;
+	public static final int RES_EMAIL_INVALID = 0x009;
+	public static final int RES_PASSWORD_INVALID = 0x00A;
 
 	public static final int ERR_DATABASE_CONNECTION = 0x100;
 	public static final int ERR_DATABASE_QUERY_EXECUTION = 0x101;
@@ -42,7 +45,14 @@ public class Messages
 			"Необходимо указать название загадки (от 5 до 100 символов)", // 0x005
 			"Необходимо указать текст загадки (от 5 до 1000 символов)", // 0x006
 			"Необходимо указать хотя бы один правильный ответ на загадку (от 5 до 100 символов)", // 0x007
-			""
+			"Имя пользователя должно состоять из латинских букв и цифр и быть длиной от 3 до 30 символов", // 0x008
+			"E-mail указан неверно", // 0x009
+			"Пароль должен содержать латинские заглавные и строчные буквы и цифры и быть длиной от 6 до 20 сиволов", // 0x00A
+			"", // 0x00B
+			"", // 0x00C
+			"", // 0x00D
+			"", // 0x00E
+			"", // 0x00F
 	};
 
 	private static final String[] MESSAGES1 = {

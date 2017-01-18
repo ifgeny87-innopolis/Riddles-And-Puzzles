@@ -7,10 +7,10 @@ import ru.rap.common.Messages;
 import ru.rap.common.exceptions.DaoException;
 import ru.rap.common.exceptions.DbConnectException;
 import ru.rap.dao.RiddleDao;
-import ru.rap.models.Answer;
+import ru.rap.models.AnswerModel;
 import ru.rap.models.BaseModel;
-import ru.rap.models.Riddle;
-import ru.rap.models.User;
+import ru.rap.models.RiddleModel;
+import ru.rap.models.UserModel;
 import ru.rap.validators.StrValidator;
 
 import java.sql.Timestamp;
@@ -21,7 +21,7 @@ import java.util.*;
  *
  * Created in project RiddlesAndPuzzles in 27.12.2016
  */
-public class RiddleService extends BaseService<Riddle>
+public class RiddleService extends BaseService<RiddleModel>
 {
 	// Logger
 	private static final Logger log = LoggerFactory.getLogger(RiddleService.class);
@@ -64,9 +64,9 @@ public class RiddleService extends BaseService<Riddle>
 	 * @throws DaoException
 	 * @throws DbConnectException
 	 */
-	public Map<Riddle, Timestamp> getListNotOfUser(UUID userId, int start, int count) throws DaoException, DbConnectException
+	public Map<RiddleModel, Timestamp> getListNotOfUser(UUID userId, int start, int count) throws DaoException, DbConnectException
 	{
-		List<Riddle> _riddles = dao.select("WHERE user_id<>? LIMIT ?,?",
+		List<RiddleModel> _riddles = dao.select("WHERE user_id<>? LIMIT ?,?",
 				userId, start, count);
 
 		if (_riddles == null)
@@ -81,15 +81,15 @@ public class RiddleService extends BaseService<Riddle>
 				.map(BaseModel::getId)
 				.toArray(UUID[]::new);
 
-		Map<UUID, Answer> answers = answerService.getFor(userId, _uids);
+		Map<UUID, AnswerModel> answers = answerService.getFor(userId, _uids);
 
 		// список отгадок получен, разбираю
-		Map<Riddle, Timestamp> result = new HashMap<>();
+		Map<RiddleModel, Timestamp> result = new HashMap<>();
 
-		for (Riddle riddle : _riddles) {
+		for (RiddleModel riddle : _riddles) {
 			UUID _riddleId = riddle.getId();
 			if (answers.containsKey(_riddleId)) {
-				Answer _answer = answers.get(_riddleId);
+				AnswerModel _answer = answers.get(_riddleId);
 				Timestamp _timestamp = _answer.getCreated();
 				result.put(riddle, _timestamp);
 			} else {
@@ -123,7 +123,7 @@ public class RiddleService extends BaseService<Riddle>
 	 * @throws DaoException
 	 * @throws DbConnectException
 	 */
-	public List<Riddle> getListOfUser(UUID userId, int start, int count) throws DaoException, DbConnectException
+	public List<RiddleModel> getListOfUser(UUID userId, int start, int count) throws DaoException, DbConnectException
 	{
 		return dao.select("WHERE user_id=? LIMIT ?,?", userId, start, count);
 	}
@@ -201,7 +201,7 @@ public class RiddleService extends BaseService<Riddle>
 
 		boolean ok;
 		try {
-			ok = dao.insert(new Riddle(userId, title, text, null, answers));
+			ok = dao.insert(new RiddleModel(userId, title, text, null, answers));
 			dao.commit();
 		} catch (DaoException | DbConnectException e) {
 			log.error(e.getMessage(), e);
@@ -221,7 +221,7 @@ public class RiddleService extends BaseService<Riddle>
 	 * @throws DbConnectException
 	 * @throws DaoException
 	 */
-	public Riddle getRiddle(UUID id) throws DbConnectException, DaoException
+	public RiddleModel getRiddle(UUID id) throws DbConnectException, DaoException
 	{
 		return dao.selectOneBy("id", id);
 	}
@@ -237,7 +237,7 @@ public class RiddleService extends BaseService<Riddle>
 	 * @throws DbConnectException
 	 * @throws DaoException
 	 */
-	public int updateRiddle(Riddle oldRiddle, String title, String text, String answer_text) throws DbConnectException, DaoException
+	public int updateRiddle(RiddleModel oldRiddle, String title, String text, String answer_text) throws DbConnectException, DaoException
 	{
 		// сначала валидация полей
 		Object res = validate(title, text, answer_text);
@@ -252,7 +252,7 @@ public class RiddleService extends BaseService<Riddle>
 
 		boolean ok;
 		try {
-			ok = dao.update(new Riddle(oldRiddle.getId(), oldRiddle.getUserId(), title, text, oldRiddle.getImage(), answers, oldRiddle.getAnswerCount(), oldRiddle.getTryCount(), oldRiddle.getCreated(), null));
+			ok = dao.update(new RiddleModel(oldRiddle.getId(), oldRiddle.getUserId(), title, text, oldRiddle.getImage(), answers, oldRiddle.getAnswerCount(), oldRiddle.getTryCount(), oldRiddle.getCreated(), null));
 			dao.commit();
 		} catch (DaoException | DbConnectException e) {
 			log.error(e.getMessage(), e);
@@ -272,7 +272,7 @@ public class RiddleService extends BaseService<Riddle>
 	 * @throws DaoException
 	 * @throws DbConnectException
 	 */
-	public int deleteRiddle(Riddle riddle) throws DaoException, DbConnectException
+	public int deleteRiddle(RiddleModel riddle) throws DaoException, DbConnectException
 	{
 		return dao.delete(riddle) ? 0 : -1;
 	}
@@ -285,7 +285,7 @@ public class RiddleService extends BaseService<Riddle>
 	 * @param answer
 	 * @return
 	 */
-	public int answer(User user, Riddle riddle, String answer) throws DbConnectException, DaoException
+	public int answer(UserModel user, RiddleModel riddle, String answer) throws DbConnectException, DaoException
 	{
 		// есть ли ответ среди правильных?
 		boolean is_right = Arrays.asList(riddle.getAnswers()).contains(answer);
@@ -318,11 +318,11 @@ public class RiddleService extends BaseService<Riddle>
 	 * @param rightsToo Нужно ли также увеличить счетчик верных ответов
 	 * @return 0 или номер ошибки
 	 */
-	private int incTries(Riddle r, boolean rightsToo) throws DbConnectException, DaoException
+	private int incTries(RiddleModel r, boolean rightsToo) throws DbConnectException, DaoException
 	{
 		int answer_count = r.getAnswerCount() + (rightsToo ? 1 : 0);
 		int try_count = r.getTryCount() + 1;
 
-		return dao.update(new Riddle(r.getId(), r.getUserId(), r.getTitle(), r.getText(), r.getImage(), r.getAnswers(), answer_count, try_count, r.getCreated(), null)) ? 0 : -1;
+		return dao.update(new RiddleModel(r.getId(), r.getUserId(), r.getTitle(), r.getText(), r.getImage(), r.getAnswers(), answer_count, try_count, r.getCreated(), null)) ? 0 : -1;
 	}
 }

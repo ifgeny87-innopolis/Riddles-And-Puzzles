@@ -7,7 +7,7 @@ import ru.rap.common.exceptions.DaoException;
 import ru.rap.common.exceptions.DbConnectException;
 import ru.rap.dao.AnswerDao;
 import ru.rap.libraries.StringLibrary;
-import ru.rap.models.Answer;
+import ru.rap.models.AnswerModel;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -17,7 +17,7 @@ import java.util.stream.Stream;
  *
  * Created in project RiddlesAndPuzzles in 28.12.2016
  */
-public class AnswerService extends BaseService<Answer>
+public class AnswerService extends BaseService<AnswerModel>
 {
 	// Logger
 	private static final Logger log = LoggerFactory.getLogger(AnswerService.class);
@@ -59,10 +59,10 @@ public class AnswerService extends BaseService<Answer>
 	 */
 	public boolean insert(UUID user_id, UUID riddle_id, String answer, boolean is_right) throws DbConnectException, DaoException
 	{
-		return dao.insert(new Answer(user_id, riddle_id, answer, is_right));
+		return dao.insert(new AnswerModel(user_id, riddle_id, answer, is_right));
 	}
 
-	public Map<UUID, Answer> getFor(UUID userId, UUID... riddleIds) throws DbConnectException, DaoException
+	public Map<UUID, AnswerModel> getFor(UUID userId, UUID... riddleIds) throws DbConnectException, DaoException
 	{
 		String sql = "WHERE user_id=? AND is_right=1 AND riddle_id IN ("
 				+ StringLibrary.repeat("?", ",", riddleIds.length) + ")";
@@ -73,12 +73,12 @@ public class AnswerService extends BaseService<Answer>
 			args[i + 1] = riddleIds[i];
 		}
 
-		List<Answer> list = dao.select(sql, args);
+		List<AnswerModel> list = dao.select(sql, args);
 
 		if (list == null)
 			return null;
 
-		Map<UUID, Answer> result = new HashMap<>();
+		Map<UUID, AnswerModel> result = new HashMap<>();
 		list.forEach(a -> result.put(a.getRiddleId(), a));
 		return result;
 	}

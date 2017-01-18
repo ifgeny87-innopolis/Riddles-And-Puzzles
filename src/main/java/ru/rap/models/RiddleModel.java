@@ -9,7 +9,7 @@ import java.util.UUID;
  *
  * Created in project RiddlesAndPuzzles in 25.12.2016
  */
-public class Riddle extends BaseModel
+public class RiddleModel extends BaseModel
 {
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 	//  FIELDS
@@ -46,7 +46,7 @@ public class Riddle extends BaseModel
 	//  CONSTRUCTORS
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-	public Riddle(UUID id, UUID user_id, String title, String text, String image, String[] answers, int answer_count, int try_count, Timestamp created, Timestamp updated)
+	public RiddleModel(UUID id, UUID user_id, String title, String text, String image, String[] answers, int answer_count, int try_count, Timestamp created, Timestamp updated)
 	{
 		super(id);
 		this.user_id = user_id;
@@ -60,7 +60,7 @@ public class Riddle extends BaseModel
 		this.updated = updated;
 	}
 
-	public Riddle(UUID user_id, String title, String text, String image, String[] answers)
+	public RiddleModel(UUID user_id, String title, String text, String image, String[] answers)
 	{
 		this(null, user_id, title, text, image, answers, 0, 0, null, null);
 	}

@@ -9,6 +9,7 @@
 
     <!-- Dao beans -->
     <bean class="ru.rap.dao.UserDao" id="userDao"/>
+    <bean class="ru.rap.dao.RoleDao" id="roleDao"/>
     <bean class="ru.rap.dao.RiddleDao" id="riddleDao"/>
     <bean class="ru.rap.dao.AnswerDao" id="answerDao"/>
 
@@ -20,6 +21,10 @@
     <!-- Policies beans -->
     <bean class="ru.rap.policies.RapUserDetailsService" id="userDetailService"/>
     <bean class="ru.rap.policies.RapPasswordEncoder" id="passwordEncoder"/>
+
+    <!-- Validators -->
+    <bean class="ru.rap.common.validators.UsernameValidator" id="usernameValidator"/>
+    <bean class="ru.rap.common.validators.PasswordValidator" id="passwordValidator"/>
 
     <!-- Context scan -->
     <context:component-scan base-package="ru.rap.dao"/>
