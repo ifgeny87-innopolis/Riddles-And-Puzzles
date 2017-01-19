@@ -43,12 +43,12 @@ public class RiddleEntity
 	private String[] answers;
 
 	// количество правильных ответов
-	@Column
-	private int answer_count;
+	@Column(name = "answer_count")
+	private int answerCount;
 
 	// количество сделанных попыток
-	@Column
-	private int try_count;
+	@Column(name="tryCount")
+	private int tryCount;
 
 	// время создания
 	@Column
@@ -94,12 +94,12 @@ public class RiddleEntity
 
 	public int getAnswerCount()
 	{
-		return answer_count;
+		return answerCount;
 	}
 
 	public int getTryCount()
 	{
-		return try_count;
+		return tryCount;
 	}
 
 	public Timestamp getCreated()
@@ -112,4 +112,55 @@ public class RiddleEntity
 		return updated;
 	}
 
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
+	//  SETTERS
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
+
+	public RiddleEntity setUid(UUID uid)
+	{
+		this.uid = uid;
+		return this;
+	}
+
+	public RiddleEntity setRiddler(UserEntity riddler)
+	{
+		this.riddler = riddler;
+		return this;
+	}
+
+	public RiddleEntity setTitle(String title)
+	{
+		this.title = title;
+		return this;
+	}
+
+	public RiddleEntity setText(String text)
+	{
+		this.text = text;
+		return this;
+	}
+
+	public RiddleEntity setAnswers(String[] answers)
+	{
+		this.answers = answers;
+		return this;
+	}
+
+	public RiddleEntity setImage(String image)
+	{
+		this.image = image;
+		return this;
+	}
+
+	public RiddleEntity setAnswerCount(int answer_count)
+	{
+		this.answerCount = answer_count;
+		return this;
+	}
+
+	public RiddleEntity setTryCount(int try_count)
+	{
+		this.tryCount = try_count;
+		return this;
+	}
 }

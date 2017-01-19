@@ -1,5 +1,9 @@
 package ru.rap.entities;
 
+import org.springframework.security.core.GrantedAuthority;
+import ru.rap.roles.ROLE_ADMIN;
+import ru.rap.roles.ROLE_USER;
+
 import javax.persistence.*;
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -82,5 +86,14 @@ public class RoleEntity
 	public Timestamp getUpdated()
 	{
 		return updated;
+	}
+
+	public GrantedAuthority getGrantedAuthority() {
+		if(name.equals("ROLE_ADMIN"))
+			return new ROLE_ADMIN();
+		else if(name.equals("ROLE_USER"))
+			return new ROLE_USER();
+		else
+			return null;
 	}
 }

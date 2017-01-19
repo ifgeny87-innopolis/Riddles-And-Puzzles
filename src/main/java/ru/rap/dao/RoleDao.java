@@ -6,11 +6,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
 import ru.rap.entities.RoleEntity;
+import ru.rap.entities.UserEntity;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Управление ролями
@@ -22,9 +24,13 @@ public class RoleDao extends BaseDao<RoleEntity>
 	// logger
 	private static final Logger log = LoggerFactory.getLogger(RoleDao.class);
 
-	public Collection<? extends GrantedAuthority> getRolesByUserId(UUID userId) {
+	public Collection<? extends GrantedAuthority> getRolesByUser(UserEntity user) {
 		List<GrantedAuthority> list = new ArrayList<>();
-		String sql = "from "
+		List<RoleEntity> userRoles = user.getRoles();
+		return user.getRoles()
+				.stream()
+				.map(RoleEntity::getGrantedAuthority)
+				.collect(Collectors.toList());
 	}
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>

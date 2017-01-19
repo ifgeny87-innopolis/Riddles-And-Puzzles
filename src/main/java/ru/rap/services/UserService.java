@@ -6,17 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ru.rap.common.Messages;
-import ru.rap.common.exceptions.DaoException;
-import ru.rap.common.exceptions.DbConnectException;
 import ru.rap.common.validators.PasswordValidator;
 import ru.rap.common.validators.UsernameValidator;
 import ru.rap.dao.RoleDao;
 import ru.rap.dao.UserDao;
 import ru.rap.entities.UserEntity;
-import ru.rap.libraries.HashLibrary;
 import ru.rap.models.UserModel;
 
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -101,14 +97,12 @@ public class UserService extends BaseService<UserModel>
 	 * @param username
 	 * @return
 	 */
-	public UserModel getByName(String username)
+	public UserEntity getByName(String username)
 	{
-		UserEntity e = userDao.selectOneBy("name", username);
-		return getModel(e);
+		return userDao.selectOneBy("name", username);
 	}
 
-	public Collection<? extends GrantedAuthority> getUserRoles(UserModel user) {
-		return roleDao.getRolesByUserId(user.getId());
+	public Collection<? extends GrantedAuthority> getUserRoles(UserEntity user) {
+		return roleDao.getRolesByUser(user);
 	}
-
 }

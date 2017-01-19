@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ru.rap.common.exceptions.DaoException;
+import ru.rap.entities.UserEntity;
 import ru.rap.models.UserModel;
 import ru.rap.services.UserService;
 
@@ -18,7 +19,7 @@ public class RapUserDetails implements UserDetails
 	// logger
 	private static final Logger log = LoggerFactory.getLogger(RapUserDetails.class);
 
-	private final UserModel user;
+	private final UserEntity user;
 
 	private UserService userService;
 
@@ -26,7 +27,7 @@ public class RapUserDetails implements UserDetails
 	//  CONSTRUCTOR
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 
-	public RapUserDetails(UserModel user, UserService userService)
+	public RapUserDetails(UserEntity user, UserService userService)
 	{
 		this.user = user;
 		this.userService = userService;
@@ -36,7 +37,7 @@ public class RapUserDetails implements UserDetails
 	//  GETTERS
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 
-	public UserModel getUser()
+	public UserEntity getUser()
 	{
 		return user;
 	}

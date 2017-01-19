@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ru.rap.common.exceptions.DaoException;
 import ru.rap.common.exceptions.DbConnectException;
 import ru.rap.dao.AnswerDao;
+import ru.rap.entities.AnswerEntity;
+import ru.rap.entities.RiddleEntity;
+import ru.rap.entities.UserEntity;
 import ru.rap.libraries.StringLibrary;
 import ru.rap.models.AnswerModel;
 
@@ -22,14 +25,8 @@ public class AnswerService extends BaseService<AnswerModel>
 	// Logger
 	private static final Logger log = LoggerFactory.getLogger(AnswerService.class);
 
-	@Override
-	protected Logger getLogger() { return log;}
-
 	@Autowired
 	private AnswerDao dao;
-
-	@Override
-	protected AnswerDao getDao() { return dao;}
 
 	/**
 	 * Решил ли пользователь загадку
@@ -49,20 +46,22 @@ public class AnswerService extends BaseService<AnswerModel>
 	/**
 	 * Добавляет новую запись в справочник
 	 *
-	 * @param user_id
-	 * @param riddle_id
 	 * @param answer
 	 * @param is_right
 	 * @return
 	 * @throws DbConnectException
 	 * @throws DaoException
 	 */
-	public boolean insert(UUID user_id, UUID riddle_id, String answer, boolean is_right) throws DbConnectException, DaoException
+	public void insert(UserEntity user, RiddleEntity riddle, String answer, boolean is_right)
 	{
-		return dao.insert(new AnswerModel(user_id, riddle_id, answer, is_right));
+		dao.insert(new AnswerEntity()
+				.setAnswerer(user)
+				.setRiddle(riddle)
+				.setAnswer(answer)
+				.setRight(is_right));
 	}
 
-	public Map<UUID, AnswerModel> getFor(UUID userId, UUID... riddleIds) throws DbConnectException, DaoException
+	public Map<UUID, AnswerEntity> getFor(UUID userId, UUID... riddleIds) throws DbConnectException, DaoException
 	{
 		String sql = "WHERE user_id=? AND is_right=1 AND riddle_id IN ("
 				+ StringLibrary.repeat("?", ",", riddleIds.length) + ")";
@@ -73,13 +72,13 @@ public class AnswerService extends BaseService<AnswerModel>
 			args[i + 1] = riddleIds[i];
 		}
 
-		List<AnswerModel> list = dao.select(sql, args);
+		List<AnswerEntity> list = dao.select(sql, args);
 
 		if (list == null)
 			return null;
 
-		Map<UUID, AnswerModel> result = new HashMap<>();
-		list.forEach(a -> result.put(a.getRiddleId(), a));
+		Map<UUID, AnswerEntity> result = new HashMap<>();
+		list.forEach(a -> result.put(a.getRiddle().getUid(), a));
 		return result;
 	}
 }

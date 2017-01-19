@@ -35,8 +35,8 @@ public class AnswerEntity
 	private String answer;
 
 	// флаг правильного ответа
-	@Column
-	private boolean is_right;
+	@Column(name="isRight")
+	private boolean isRight;
 
 	// время создания
 	@Column
@@ -68,11 +68,46 @@ public class AnswerEntity
 
 	public boolean getIsRight()
 	{
-		return is_right;
+		return isRight;
 	}
 
 	public Timestamp getCreated()
 	{
 		return created;
+	}
+
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
+	//  SETTERS
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
+
+
+	public AnswerEntity setUid(UUID uid)
+	{
+		this.uid = uid;
+		return this;
+	}
+
+	public AnswerEntity setAnswerer(UserEntity answerer)
+	{
+		this.answerer = answerer;
+		return this;
+	}
+
+	public AnswerEntity setRiddle(RiddleEntity riddle)
+	{
+		this.riddle = riddle;
+		return this;
+	}
+
+	public AnswerEntity setAnswer(String answer)
+	{
+		this.answer = answer;
+		return this;
+	}
+
+	public AnswerEntity setRight(boolean right)
+	{
+		this.isRight = right;
+		return this;
 	}
 }

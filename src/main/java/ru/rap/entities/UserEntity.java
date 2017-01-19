@@ -2,6 +2,7 @@ package ru.rap.entities;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -45,6 +46,13 @@ public class UserEntity
 	// созданные загадки
 	@OneToMany(mappedBy = "creator", fetch = FetchType.EAGER)
 	private RiddleEntity[] makedRiddles;
+
+	// роли
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "role2user",
+			joinColumns = @JoinColumn(name = "role_id"),
+			inverseJoinColumns = @JoinColumn(name = "role_id"))
+	private List<RoleEntity> roles;
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 	//  GETTERS & SETTERS
@@ -125,5 +133,10 @@ public class UserEntity
 	{
 		this.makedRiddles = makedRiddles;
 		return this;
+	}
+
+	public List<RoleEntity> getRoles()
+	{
+		return roles;
 	}
 }

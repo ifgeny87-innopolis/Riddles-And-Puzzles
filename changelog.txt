@@ -538,3 +538,53 @@ Change files from: Tue Jan 17 20:58:03 MSK 2017
 New version 1.0-SNAPSHOT build 0.0.1.34
 Date: Tue Jan 17 21:00:47 MSK 2017
 Change files from: Tue Jan 17 21:00:20 MSK 2017
+
+------------------------------------------------------------
+New version 1.0-SNAPSHOT build 0.0.1.35
+Date: Thu Jan 19 17:30:37 MSK 2017
+Change files from: Tue Jan 17 21:00:47 MSK 2017
+- main/webapp/WEB-INF/views/riddles/my.jsp
+- main/webapp/WEB-INF/application.xml
+- main/webapp/WEB-INF/web.xml
+- main/webapp/WEB-INF/tags/wrapper.tag
+- main/webapp/WEB-INF/spring-database.xml
+- main/java/ru/rap/services/BaseService.java
+- main/java/ru/rap/services/RiddleService.java
+- main/java/ru/rap/services/AnswerService.java
+- main/java/ru/rap/services/UserService.java
+- main/java/ru/rap/dao/RoleDao.java
+- main/java/ru/rap/dao/UserDao.java
+- main/java/ru/rap/dao/RiddleDao.java
+- main/java/ru/rap/dao/BaseDao.java
+- main/java/ru/rap/dao/AnswerDao.java
+- main/java/ru/rap/controllers/BaseController.java
+- main/java/ru/rap/controllers/UserController.java
+- main/java/ru/rap/controllers/RiddleController.java
+- main/java/ru/rap/common/validators/UsernameValidator.java
+- main/java/ru/rap/common/validators/IValidator.java
+- main/java/ru/rap/common/validators/EmailValidator.java
+- main/java/ru/rap/common/validators/PasswordValidator.java
+- main/java/ru/rap/common/Messages.java
+- main/java/ru/rap/entities/RoleEntity.java
+- main/java/ru/rap/entities/UserEntity.java
+- main/java/ru/rap/entities/RiddleEntity.java
+- main/java/ru/rap/entities/AnswerEntity.java
+- main/java/ru/rap/policies/RapUserDetails.java
+- main/java/ru/rap/policies/RapUserDetailsService.java
+- main/java/ru/rap/policies/RapPasswordEncoder.java
+- main/java/ru/rap/policies/RapPrincipal.java
+- main/java/ru/rap/models/UserModel.java
+- main/java/ru/rap/models/RiddleModel.java
+- main/java/ru/rap/models/BaseModel.java
+- main/java/ru/rap/models/AnswerModel.java
+- main/java/ru/rap/restapi/UserApi.java
+
+------------------------------------------------------------
+New version 1.0-SNAPSHOT build 0.0.1.36
+Date: Thu Jan 19 17:32:40 MSK 2017
+Change files from: Thu Jan 19 17:30:37 MSK 2017
+
+------------------------------------------------------------
+New version 1.0-SNAPSHOT build 0.0.1.37
+Date: Thu Jan 19 17:33:21 MSK 2017
+Change files from: Thu Jan 19 17:32:41 MSK 2017

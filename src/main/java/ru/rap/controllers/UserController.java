@@ -44,13 +44,7 @@ public class UserController extends BaseController
 	)
 	{
 		// пробую создать нового пользователя
-		int resCode;
-		try {
-			resCode = userService.registerUser(regEmail, regPwd);
-		} catch (DaoException | DbConnectException e) {
-			log.error(e.getMessage(), e);
-			return reportAndForwardError(e);
-		}
+		int resCode = userService.registerUser(regEmail, regPwd);
 
 		if (resCode != 0) {
 			// не удалось создать пользователя
@@ -59,31 +53,6 @@ public class UserController extends BaseController
 		}
 
 		// чтобы пользователь не тратил время на вход, сразу авторизую его
-		return doAuth(regEmail, regPwd);
-	}
-
-	@RequestMapping(value = "auth", method = RequestMethod.POST)
-	public String auth(
-			@RequestParam String authEmail,
-			@RequestParam String authPwd,
-			HttpServletResponse response,
-			Model model
-	)
-	{
-		this.response = response;
-		this.model = model;
-		return doAuth(authEmail, authPwd);
-	}
-
-	@RequestMapping("exit")
-	public String exit()
-	{
-		userService.exitUser(getSessionId());
-
-		// сбрасываю sessionId
-		request.changeSessionId();
-
-		// вышел или не вышел, не важно, отправляю его на домашнюю
 		return PAGE_INDEX;
 	}
 
@@ -91,60 +60,20 @@ public class UserController extends BaseController
 	//  ACTIONS
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 
-	/**
-	 * Авторизация пользователя в ИС
-	 *
-	 * @param authEmail email пользователя
-	 * @param authPwd   RAW пароль пользователя
-	 */
-	private String doAuth(String authEmail, String authPwd)
-	{
-		// пробую авторизовать пользователя
-		int resCode;
-		try {
-			resCode = userService.authUser(getSessionId(), authEmail, authPwd);
-		} catch (DaoException | DbConnectException e) {
-			log.error(e.getMessage(), e);
-			return reportAndForwardError(e);
-		}
-
-		if (resCode != 0) {
-			// не удалось авторизоваться
-			model.addAttribute("error_message", Messages.get(resCode));
-			return PAGE_INDEX;
-		}
-
-		// пользователь авторизован, отправляю его на страницу списка задач
-		return redirectTo(PAGE_RIDDLES);
-	}
-
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 	//  STATIC METHODS
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 
-	/**
-	 * Проверка авторизации по номеру сессии
-	 * [!] Запрос к базе не выполняется
-	 *
-	 * @param sessionId Номер сессии
-	 * @return Флаг авторизации
-	 */
-	public boolean isUserAuth(String sessionId)
-	{
-		boolean flag = userService.isUserAuth(sessionId);
-		return flag;
-	}
-
-	/**
-	 * Получение пользователя по номеру сессии
-	 * В случае исключения не выполняет переход на страницу ошибки, вернет null
-	 *
-	 * @param sessionId Номер сессии
-	 * @return Авторизованный пользователь
-	 */
-	UserModel getUserAuth(String sessionId) throws DbConnectException, DaoException
-	{
-		UserModel user = userService.getUserAuth(sessionId);
-		return user;
-	}
+//	/**
+//	 * Получение пользователя по номеру сессии
+//	 * В случае исключения не выполняет переход на страницу ошибки, вернет null
+//	 *
+//	 * @param sessionId Номер сессии
+//	 * @return Авторизованный пользователь
+//	 */
+//	UserModel getUserAuth(String sessionId) throws DbConnectException, DaoException
+//	{
+//		UserModel user = userService.getUserAuth(sessionId);
+//		return user;
+//	}
 }
