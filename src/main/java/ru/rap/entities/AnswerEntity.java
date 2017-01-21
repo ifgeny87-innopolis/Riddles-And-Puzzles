@@ -2,7 +2,6 @@ package ru.rap.entities;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.UUID;
 
 /**
  * Сущность отгадок
@@ -19,15 +18,16 @@ public class AnswerEntity
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
-	private UUID uid;
+	private Integer id;
 
 	// автор
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_user", foreignKey = @ForeignKey(name = "fk_answer_user"))
 	private UserEntity answerer;
 
 	// загадка
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_riddle",foreignKey = @ForeignKey(name = "fk_answer_riddle"))
 	private RiddleEntity riddle;
 
 	// текст отгадки
@@ -35,20 +35,20 @@ public class AnswerEntity
 	private String answer;
 
 	// флаг правильного ответа
-	@Column(name="isRight")
+	@Column(name = "is_right")
 	private boolean isRight;
 
 	// время создания
-	@Column
+	@Column(name = "time_create")
 	private Timestamp created;
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	//  GETTERS
+	//  Getters
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 
-	public UUID getUid()
+	public Integer getId()
 	{
-		return uid;
+		return id;
 	}
 
 	public UserEntity getAnswerer()
@@ -66,7 +66,7 @@ public class AnswerEntity
 		return answer;
 	}
 
-	public boolean getIsRight()
+	public boolean isRight()
 	{
 		return isRight;
 	}
@@ -77,15 +77,8 @@ public class AnswerEntity
 	}
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	//  SETTERS
+	//  Setters
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-
-
-	public AnswerEntity setUid(UUID uid)
-	{
-		this.uid = uid;
-		return this;
-	}
 
 	public AnswerEntity setAnswerer(UserEntity answerer)
 	{
@@ -105,9 +98,9 @@ public class AnswerEntity
 		return this;
 	}
 
-	public AnswerEntity setRight(boolean right)
+	public AnswerEntity setIsRight(boolean isRight)
 	{
-		this.isRight = right;
+		this.isRight = isRight;
 		return this;
 	}
 }

@@ -3,6 +3,7 @@ package ru.rap.dao;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,10 +34,21 @@ public abstract class BaseDao<T>
 	protected SessionFactory sessionFactory;
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
+	//  PREPARE
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
+
+	protected abstract Query<T> prepare(Session session, String condition, Object[] args);
+
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 	//  COUNT
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 
-	public abstract int count(String condition, Object... args);
+	public int count(String condition, Object... args) {
+		try (Session session = sessionFactory.openSession()) {
+			return prepare(session, condition, args)
+					.getFetchSize();
+		}
+	}
 
 	public int count() {
 		return count(null);
@@ -46,11 +58,24 @@ public abstract class BaseDao<T>
 	//  SELECT
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 
-	public abstract T selectOne(String condition, Object... args);
+	public T selectOne(String condition, Object... args)
+	{
+		try (Session session = sessionFactory.openSession()) {
+			return prepare(session, condition, args)
+					.setMaxResults(1)
+					.getSingleResult();
+		}
+	}
 
 	public abstract T selectOneBy(String field, Object arg);
 
-	public abstract List<T> select(String condition, Object... args);
+	public List<T> select(String condition, Object... args)
+	{
+		try (Session session = sessionFactory.openSession()) {
+			return prepare(session, condition, args)
+					.getResultList();
+		}
+	}
 
 	public abstract List<T> selectBy(String field, Object arg);
 

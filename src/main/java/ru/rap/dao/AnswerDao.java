@@ -4,6 +4,7 @@ import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 import ru.rap.entities.AnswerEntity;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
  *
  * Created in project RiddlesAndPuzzles in 28.12.2016
  */
+@Transactional
 public class AnswerDao extends BaseDao<AnswerEntity>
 {
 	// logger
@@ -22,9 +24,10 @@ public class AnswerDao extends BaseDao<AnswerEntity>
 	//  PREPARE
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 
-	private Query<AnswerEntity> prepare(Session session, String condition, Object[] args)
+	@Override
+	protected Query<AnswerEntity> prepare(Session session, String condition, Object[] args)
 	{
-		String sql = (condition != null)
+		String sql = (condition == null)
 				? "from AnswerEntity"
 				: condition;
 
@@ -47,36 +50,9 @@ public class AnswerDao extends BaseDao<AnswerEntity>
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 
 	@Override
-	public int count(String condition, Object... args)
-	{
-		try (Session session = sessionFactory.openSession()) {
-			return prepare(session, condition, args)
-					.getFetchSize();
-		}
-	}
-
-	@Override
-	public AnswerEntity selectOne(String condition, Object... args)
-	{
-		try (Session session = sessionFactory.openSession()) {
-			return prepare(session, condition, args)
-					.getSingleResult();
-		}
-	}
-
-	@Override
 	public AnswerEntity selectOneBy(String field, Object arg)
 	{
 		return selectOne(String.format("from AnswerEntity where %s=:value", field), arg);
-	}
-
-	@Override
-	public List<AnswerEntity> select(String condition, Object... args)
-	{
-		try (Session session = sessionFactory.openSession()) {
-			return prepare(session, condition, args)
-					.getResultList();
-		}
 	}
 
 	@Override

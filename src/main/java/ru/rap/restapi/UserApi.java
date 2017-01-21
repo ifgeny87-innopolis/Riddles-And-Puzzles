@@ -32,6 +32,7 @@ public class UserApi extends BaseApi {
 		}
 
 		// иначе вывожу данные о пользователе
-		sendJson(res, JsonResult.genOkResult(user.getMap()));
+//		sendJson(res, JsonResult.genOkResult(user.getMap()));
+		sendJson(res, JsonResult.genOkResult(1));
 	}
 }

@@ -1,8 +1,6 @@
 package ru.rap.models;
 
 import java.sql.Timestamp;
-import java.util.Map;
-import java.util.UUID;
 
 /**
  * Сущность загадки
@@ -11,12 +9,8 @@ import java.util.UUID;
  */
 public class RiddleModel extends BaseModel
 {
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	//  FIELDS
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-
 	// id автора
-	private final UUID user_id;
+	private final Integer userId;
 
 	// заголовок
 	private final String title;
@@ -31,10 +25,10 @@ public class RiddleModel extends BaseModel
 	private final String[] answers;
 
 	// количество правильных ответов
-	private final int answer_count;
+	private final int answeredCount;
 
 	// количество сделанных попыток
-	private final int try_count;
+	private final int tryCount;
 
 	// время создания
 	private final java.sql.Timestamp created;
@@ -43,35 +37,30 @@ public class RiddleModel extends BaseModel
 	private final java.sql.Timestamp updated;
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	//  CONSTRUCTORS
+	//  Constructors
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-	public RiddleModel(UUID id, UUID user_id, String title, String text, String image, String[] answers, int answer_count, int try_count, Timestamp created, Timestamp updated)
+	public RiddleModel(Integer id, Integer userId, String title, String text, String image, String[] answers, int answeredCount, int tryCount, Timestamp created, Timestamp updated)
 	{
 		super(id);
-		this.user_id = user_id;
+		this.userId = userId;
 		this.title = title;
 		this.text = text;
 		this.image = image;
 		this.answers = answers;
-		this.answer_count = answer_count;
-		this.try_count = try_count;
+		this.answeredCount = answeredCount;
+		this.tryCount = tryCount;
 		this.created = created;
 		this.updated = updated;
 	}
 
-	public RiddleModel(UUID user_id, String title, String text, String image, String[] answers)
-	{
-		this(null, user_id, title, text, image, answers, 0, 0, null, null);
-	}
-
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	//  GETTERS
+	//  Getters
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 
-	public UUID getUserId()
+	public Integer getUserId()
 	{
-		return user_id;
+		return userId;
 	}
 
 	public String getTitle()
@@ -89,19 +78,19 @@ public class RiddleModel extends BaseModel
 		return image;
 	}
 
-	public String[] getAnswers()
+	public String[] getAnswer()
 	{
 		return answers;
 	}
 
-	public int getAnswerCount()
+	public int getAnsweredCount()
 	{
-		return answer_count;
+		return answeredCount;
 	}
 
 	public int getTryCount()
 	{
-		return try_count;
+		return tryCount;
 	}
 
 	public Timestamp getCreated()
@@ -112,15 +101,5 @@ public class RiddleModel extends BaseModel
 	public Timestamp getUpdated()
 	{
 		return updated;
-	}
-
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	//  MAPPING
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-
-	@Override
-	protected Map<String, Object> createPublicMap()
-	{
-		return null;
 	}
 }

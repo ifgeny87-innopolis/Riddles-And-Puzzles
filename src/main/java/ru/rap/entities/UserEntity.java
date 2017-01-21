@@ -1,9 +1,8 @@
 package ru.rap.entities;
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Сущность пользователя
@@ -20,53 +19,50 @@ public class UserEntity
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
-	private UUID uid;
+	private Integer id;
 
 	// имя пользователя
 	@Column(nullable = false)
 	private String name;
 
-	// дата рождения
-	@Column
-	private Date birth;
-
 	// хеш пароля
-	@Column
-	private String hash_password;
+	@Column(name = "hash_password")
+	private String hashPassword;
 
 	// количество верно отгаданных
-	@Column
-	private int answer_count;
+	@Column(name = "answered_count")
+	private int answeredCount;
 
 	// количество попыток
-	@Column
-	private int try_count;
+	@Column(name = "attempt_count")
+	private int attemptCount;
 
 	// созданные загадки
-	@OneToMany(mappedBy = "creator", fetch = FetchType.EAGER)
-	private RiddleEntity[] makedRiddles;
+	@OneToMany(mappedBy = "riddler", fetch = FetchType.LAZY)
+	private List<RiddleEntity> makedRiddles;
+
+	// время создания
+	@Column(name = "time_create")
+	private Timestamp created;
+
+	// время обновления
+	@Column(name = "time_update")
+	private Timestamp updated;
 
 	// роли
-	@ManyToMany(fetch = FetchType.LAZY)
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "role2user",
-			joinColumns = @JoinColumn(name = "role_id"),
-			inverseJoinColumns = @JoinColumn(name = "role_id"))
+			joinColumns = @JoinColumn(name = "id_role"),
+			inverseJoinColumns = @JoinColumn(name = "id_user"))
 	private List<RoleEntity> roles;
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	//  GETTERS & SETTERS
+	//  Getters
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 
-	public UUID getUid()
+	public Integer getId()
 	{
-		return uid;
-	}
-
-	public UserEntity setUid(UUID uid)
-	{
-		this.uid = uid;
-		return this;
+		return id;
 	}
 
 	public String getName()
@@ -74,69 +70,78 @@ public class UserEntity
 		return name;
 	}
 
+	public String getHashPassword()
+	{
+		return hashPassword;
+	}
+
+	public int getAnsweredCount()
+	{
+		return answeredCount;
+	}
+
+	public int getAttemptCount()
+	{
+		return attemptCount;
+	}
+
+	public List<RiddleEntity> getMakedRiddles()
+	{
+		return makedRiddles;
+	}
+
+	public Timestamp getCreated()
+	{
+		return created;
+	}
+
+	public Timestamp getUpdated()
+	{
+		return updated;
+	}
+
+	public List<RoleEntity> getRoles()
+	{
+		return roles;
+	}
+
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
+	//  Setters
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
+
 	public UserEntity setName(String name)
 	{
 		this.name = name;
 		return this;
 	}
 
-	public Date getBirth()
+	public UserEntity setHashPassword(String hashPassword)
 	{
-		return birth;
-	}
-
-	public UserEntity setBirth(Date birth)
-	{
-		this.birth = birth;
+		this.hashPassword = hashPassword;
 		return this;
 	}
 
-	public String getHashPassword()
+	public UserEntity setAnsweredCount(int answeredCount)
 	{
-		return hash_password;
-	}
-
-	public UserEntity setHashPassword(String hash_password)
-	{
-		this.hash_password = hash_password;
+		this.answeredCount = answeredCount;
 		return this;
 	}
 
-	public int getAnswerCount()
+	public UserEntity setAttemptCount(int attemptCount)
 	{
-		return answer_count;
-	}
-
-	public UserEntity setAnswerCount(int answer_count)
-	{
-		this.answer_count = answer_count;
+		this.attemptCount = attemptCount;
 		return this;
 	}
 
-	public int getTryCount()
-	{
-		return try_count;
-	}
-
-	public UserEntity setTryCount(int try_count)
-	{
-		this.try_count = try_count;
-		return this;
-	}
-
-	public RiddleEntity[] getMakedRiddles()
-	{
-		return makedRiddles;
-	}
-
-	public UserEntity setMakedRiddles(RiddleEntity[] makedRiddles)
+	public UserEntity setMakedRiddles(List<RiddleEntity> makedRiddles)
 	{
 		this.makedRiddles = makedRiddles;
 		return this;
 	}
 
-	public List<RoleEntity> getRoles()
+	public UserEntity setRoles(List<RoleEntity> roles)
 	{
-		return roles;
+		this.roles = roles;
+		return this;
 	}
 }

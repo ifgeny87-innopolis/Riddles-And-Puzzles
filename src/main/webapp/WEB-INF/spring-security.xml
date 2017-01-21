@@ -8,8 +8,10 @@
 	http://www.springframework.org/schema/security/spring-security.xsd">
 
     <http auto-config="true">
-        <intercept-url pattern="/riddles/**" access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')"/>
-        <intercept-url pattern="/admin*" access="hasRole('ROLE_ADMIN')"/>
+        <intercept-url pattern="/admin/**"
+                       access="hasRole('ROLE_ADMIN')"/>
+        <intercept-url pattern="/riddles/**"
+                       access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')"/>
         <form-login
                 login-page="/"
                 default-target-url="/riddles"

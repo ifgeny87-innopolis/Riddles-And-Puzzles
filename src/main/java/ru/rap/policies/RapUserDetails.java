@@ -1,5 +1,6 @@
 package ru.rap.policies;
 
+import com.sun.istack.internal.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
@@ -27,7 +28,7 @@ public class RapUserDetails implements UserDetails
 	//  CONSTRUCTOR
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 
-	public RapUserDetails(UserEntity user, UserService userService)
+	public RapUserDetails(@NotNull UserEntity user, @NotNull UserService userService)
 	{
 		this.user = user;
 		this.userService = userService;
@@ -52,7 +53,8 @@ public class RapUserDetails implements UserDetails
 		if (user == null) {
 			throw new NullPointerException("Пользователь не может быть null");
 		}
-		return userService.getUserRoles(user);
+		Collection<? extends GrantedAuthority> roles = userService.getUserRoles(user);
+		return roles;
 	}
 
 	@Override

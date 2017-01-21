@@ -5,9 +5,8 @@ import ru.rap.roles.ROLE_ADMIN;
 import ru.rap.roles.ROLE_USER;
 
 import javax.persistence.*;
-import java.sql.Date;
 import java.sql.Timestamp;
-import java.util.UUID;
+import java.util.Collection;
 
 /**
  * Сущность роли пользователя
@@ -24,8 +23,7 @@ public class RoleEntity
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
-	private UUID uid;
+	private Integer id;
 
 	@Column(nullable = false)
 	private String name;
@@ -34,26 +32,20 @@ public class RoleEntity
 	private String title;
 
 	// время создания
-	@Column
+	@Column(name = "time_create")
 	private Timestamp created;
 
 	// время обновления
-	@Column
+	@Column(name = "time_update")
 	private Timestamp updated;
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	//  GETTERS & SETTERS
+	//  Getters
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 
-	public UUID getUid()
+	public Integer getId()
 	{
-		return uid;
-	}
-
-	public RoleEntity setUid(UUID uid)
-	{
-		this.uid = uid;
-		return this;
+		return id;
 	}
 
 	public String getName()
@@ -61,21 +53,9 @@ public class RoleEntity
 		return name;
 	}
 
-	public RoleEntity setName(String name)
-	{
-		this.name = name;
-		return this;
-	}
-
 	public String getTitle()
 	{
 		return title;
-	}
-
-	public RoleEntity setTitle(String title)
-	{
-		this.title = title;
-		return this;
 	}
 
 	public Timestamp getCreated()
@@ -87,6 +67,24 @@ public class RoleEntity
 	{
 		return updated;
 	}
+
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
+	//  Setters
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
+
+	public void setName(String name)
+	{
+		this.name = name;
+	}
+
+	public void setTitle(String title)
+	{
+		this.title = title;
+	}
+
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
+	//  Special
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 
 	public GrantedAuthority getGrantedAuthority() {
 		if(name.equals("ROLE_ADMIN"))

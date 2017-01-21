@@ -81,8 +81,7 @@ public class UserService extends BaseService<UserModel>
 	 */
 	public UserModel getModel(UserEntity e)
 	{
-		return new UserModel(e.getUid(), e.getName(), e.getBirth(),
-				e.getHashPassword(), e.getAnswerCount(), e.getTryCount());
+		return new UserModel(e.getId(), e.getName(), e.getAnsweredCount(), e.getAttemptCount());
 	}
 
 	public UserModel getByUid(UUID uid)
@@ -102,7 +101,8 @@ public class UserService extends BaseService<UserModel>
 		return userDao.selectOneBy("name", username);
 	}
 
-	public Collection<? extends GrantedAuthority> getUserRoles(UserEntity user) {
+	public Collection<? extends GrantedAuthority> getUserRoles(UserEntity user)
+	{
 		return roleDao.getRolesByUser(user);
 	}
 }

@@ -4,6 +4,7 @@ import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 import ru.rap.entities.RiddleEntity;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
  *
  * Created in project RiddlesAndPuzzles in 25.12.2016
  */
+@Transactional
 public class RiddleDao extends BaseDao<RiddleEntity>
 {
 	// logger
@@ -22,9 +24,10 @@ public class RiddleDao extends BaseDao<RiddleEntity>
 	//  PREPARE
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 
-	private Query<RiddleEntity> prepare(Session session, String condition, Object[] args)
+	@Override
+	protected Query<RiddleEntity> prepare(Session session, String condition, Object[] args)
 	{
-		String sql = (condition != null)
+		String sql = (condition == null)
 				? "from RiddleEntity"
 				: condition;
 
@@ -47,36 +50,9 @@ public class RiddleDao extends BaseDao<RiddleEntity>
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 
 	@Override
-	public int count(String condition, Object... args)
-	{
-		try (Session session = sessionFactory.openSession()) {
-			return prepare(session, condition, args)
-					.getFetchSize();
-		}
-	}
-
-	@Override
-	public RiddleEntity selectOne(String condition, Object... args)
-	{
-		try (Session session = sessionFactory.openSession()) {
-			return prepare(session, condition, args)
-					.getSingleResult();
-		}
-	}
-
-	@Override
 	public RiddleEntity selectOneBy(String field, Object arg)
 	{
 		return selectOne(String.format("from RiddleEntity where %s=:value", field), arg);
-	}
-
-	@Override
-	public List<RiddleEntity> select(String condition, Object... args)
-	{
-		try (Session session = sessionFactory.openSession()) {
-			return prepare(session, condition, args)
-					.getResultList();
-		}
 	}
 
 	@Override

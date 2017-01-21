@@ -5,6 +5,7 @@ import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.transaction.annotation.Transactional;
 import ru.rap.entities.RoleEntity;
 import ru.rap.entities.UserEntity;
 
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
  *
  * Created in project RiddlesAndPuzzles in 18.01.2017
  */
+@Transactional
 public class RoleDao extends BaseDao<RoleEntity>
 {
 	// logger
@@ -27,7 +29,7 @@ public class RoleDao extends BaseDao<RoleEntity>
 	public Collection<? extends GrantedAuthority> getRolesByUser(UserEntity user) {
 		List<GrantedAuthority> list = new ArrayList<>();
 		List<RoleEntity> userRoles = user.getRoles();
-		return user.getRoles()
+		return userRoles
 				.stream()
 				.map(RoleEntity::getGrantedAuthority)
 				.collect(Collectors.toList());
@@ -37,9 +39,10 @@ public class RoleDao extends BaseDao<RoleEntity>
 	//  PREPARE
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 
-	private Query<RoleEntity> prepare(Session session, String condition, Object[] args)
+	@Override
+	protected Query<RoleEntity> prepare(Session session, String condition, Object[] args)
 	{
-		String sql = (condition != null)
+		String sql = (condition == null)
 				? "from RoleEntity"
 				: condition;
 
@@ -62,36 +65,9 @@ public class RoleDao extends BaseDao<RoleEntity>
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 
 	@Override
-	public int count(String condition, Object... args)
-	{
-		try (Session session = sessionFactory.openSession()) {
-			return prepare(session, condition, args)
-					.getFetchSize();
-		}
-	}
-
-	@Override
-	public RoleEntity selectOne(String condition, Object... args)
-	{
-		try (Session session = sessionFactory.openSession()) {
-			return prepare(session, condition, args)
-					.getSingleResult();
-		}
-	}
-
-	@Override
 	public RoleEntity selectOneBy(String field, Object arg)
 	{
 		return selectOne(String.format("from RoleEntity where %s=:value", field), arg);
-	}
-
-	@Override
-	public List<RoleEntity> select(String condition, Object... args)
-	{
-		try (Session session = sessionFactory.openSession()) {
-			return prepare(session, condition, args)
-					.getResultList();
-		}
 	}
 
 	@Override

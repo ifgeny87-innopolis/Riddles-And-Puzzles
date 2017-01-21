@@ -1,8 +1,5 @@
 package ru.rap.models;
 
-import java.util.Map;
-import java.util.UUID;
-
 /**
  * Базовая сущность
  *
@@ -10,50 +7,23 @@ import java.util.UUID;
  */
 public abstract class BaseModel
 {
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	//  FIELDS
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-
-	private final UUID id;
+	private final Integer id;
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	//  CONSTRUCTORS
+	//  Constructors
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 
-	BaseModel(UUID id)
+	BaseModel(Integer id)
 	{
 		this.id = id;
 	}
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	//  ABSTRACT
+	//  Getters
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 
-	public final UUID getId()
+	public final Integer getId()
 	{
 		return id;
-	}
-
-	protected abstract Map<String, Object> createPublicMap();
-
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	//  MAPPING
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-
-	// карта объекта для публичного использования
-	private Map<String, Object> map;
-
-	/**
-	 * Возвращает карту объекта для публичного использования
-	 * Например, в Json / Xml / Soap
-	 *
-	 * @return
-	 */
-	public final Map<String, Object> getMap()
-	{
-		if (map == null) {
-			map = createPublicMap();
-		}
-		return map;
 	}
 }

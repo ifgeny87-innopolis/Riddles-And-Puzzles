@@ -2,7 +2,6 @@ package ru.rap.entities;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.UUID;
 
 /**
  * Сущность загадки
@@ -19,11 +18,11 @@ public class RiddleEntity
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
-	private UUID uid;
+	private Integer id;
 
 	// автор
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_user", foreignKey = @ForeignKey(name = "fk_riddle_user"))
 	private UserEntity riddler;
 
 	// заголовок
@@ -39,32 +38,32 @@ public class RiddleEntity
 	private String image;
 
 	// правильный ответ (варианты ответов)
-	@Column
-	private String[] answers;
+	@Column(name = "answer_data")
+	private String answerData;
 
 	// количество правильных ответов
-	@Column(name = "answer_count")
-	private int answerCount;
+	@Column(name = "answered_count")
+	private int answeredCount;
 
 	// количество сделанных попыток
-	@Column(name="tryCount")
-	private int tryCount;
+	@Column(name = "attempt_count")
+	private int attemptCount;
 
 	// время создания
-	@Column
+	@Column(name = "time_create")
 	private Timestamp created;
 
 	// время обновления
-	@Column
+	@Column(name = "time_update")
 	private Timestamp updated;
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	//  GETTERS
+	//  Getters
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 
-	public UUID getUid()
+	public Integer getId()
 	{
-		return uid;
+		return id;
 	}
 
 	public UserEntity getRiddler()
@@ -87,19 +86,19 @@ public class RiddleEntity
 		return image;
 	}
 
-	public String[] getAnswers()
+	public String getAnswerData()
 	{
-		return answers;
+		return answerData;
 	}
 
-	public int getAnswerCount()
+	public int getAnsweredCount()
 	{
-		return answerCount;
+		return answeredCount;
 	}
 
-	public int getTryCount()
+	public int getAttemptCount()
 	{
-		return tryCount;
+		return attemptCount;
 	}
 
 	public Timestamp getCreated()
@@ -113,14 +112,8 @@ public class RiddleEntity
 	}
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	//  SETTERS
+	//  Setters
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-
-	public RiddleEntity setUid(UUID uid)
-	{
-		this.uid = uid;
-		return this;
-	}
 
 	public RiddleEntity setRiddler(UserEntity riddler)
 	{
@@ -140,9 +133,9 @@ public class RiddleEntity
 		return this;
 	}
 
-	public RiddleEntity setAnswers(String[] answers)
+	public RiddleEntity setAnswerData(String answerData)
 	{
-		this.answers = answers;
+		this.answerData = answerData;
 		return this;
 	}
 
@@ -152,15 +145,15 @@ public class RiddleEntity
 		return this;
 	}
 
-	public RiddleEntity setAnswerCount(int answer_count)
+	public RiddleEntity setAnsweredCount(int answeredCount)
 	{
-		this.answerCount = answer_count;
+		this.answeredCount = answeredCount;
 		return this;
 	}
 
-	public RiddleEntity setTryCount(int try_count)
+	public RiddleEntity setAttemptCount(int attemptCount)
 	{
-		this.tryCount = try_count;
+		this.attemptCount = attemptCount;
 		return this;
 	}
 }

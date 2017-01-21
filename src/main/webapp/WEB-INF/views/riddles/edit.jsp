@@ -44,7 +44,7 @@
         <button type="button" class="btn btn-default" onclick="location.href='${LIST_URL}';">Отмена</button>
         <button type="submit" class="btn btn-success">Сохранить</button>
         <button type="button" class="btn btn-danger"
-                onclick="if(confirm('Хотите удалить загадку?')) location.href='${DELETE_URL}/${riddle_id}';">Удалить
+                onclick="if(confirm('Хотите удалить загадку?')) location.href='${DELETE_URL}/${riddleId}';">Удалить
         </button>
     </form>
 </t:wrapper>

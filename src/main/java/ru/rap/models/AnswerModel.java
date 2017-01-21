@@ -1,8 +1,6 @@
 package ru.rap.models;
 
 import java.sql.Timestamp;
-import java.util.Map;
-import java.util.UUID;
 
 /**
  * Сущность отгадок
@@ -11,56 +9,52 @@ import java.util.UUID;
  */
 public class AnswerModel extends BaseModel
 {
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	//  FIELDS
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-
 	// id автора
-	private final UUID user_id;
+	private final Integer answererId;
 
 	// id загадки
-	private final UUID riddle_id;
+	private final Integer riddleId;
 
 	// текст отгадки
 	private final String answer;
 
 	// флаг правильного ответа
-	private final boolean is_right;
+	private final boolean isRight;
 
 	// время создания
 	private final Timestamp created;
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	//  CONSTRUCTORS
+	//  Constructors
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-	public AnswerModel(UUID id, UUID user_id, UUID riddle_id, String answer, boolean is_right, Timestamp created)
+	public AnswerModel(Integer id, Integer answererId, Integer riddleId, String answer, boolean isRight, Timestamp created)
 	{
 		super(id);
-		this.user_id = user_id;
-		this.riddle_id = riddle_id;
+		this.answererId = answererId;
+		this.riddleId = riddleId;
 		this.answer = answer;
-		this.is_right = is_right;
+		this.isRight = isRight;
 		this.created = created;
 	}
 
-	public AnswerModel(UUID user_id, UUID riddle_id, String answer, boolean is_right)
+	public AnswerModel(Integer answererId, Integer riddleId, String answer, boolean isRight)
 	{
-		this(null, user_id, riddle_id, answer, is_right, null);
+		this(null, answererId, riddleId, answer, isRight, null);
 	}
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	//  GETTERS
+	//  Getters
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 
-	public UUID getUserId()
+	public Integer getUserId()
 	{
-		return user_id;
+		return answererId;
 	}
 
-	public UUID getRiddleId()
+	public Integer getRiddleId()
 	{
-		return riddle_id;
+		return riddleId;
 	}
 
 	public String getAnswer()
@@ -70,21 +64,11 @@ public class AnswerModel extends BaseModel
 
 	public boolean getIsRight()
 	{
-		return is_right;
+		return isRight;
 	}
 
 	public Timestamp getCreated()
 	{
 		return created;
-	}
-
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	//  MAPPING
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-
-	@Override
-	protected Map<String, Object> createPublicMap()
-	{
-		return null;
 	}
 }

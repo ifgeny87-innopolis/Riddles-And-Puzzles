@@ -13,7 +13,6 @@ import ru.rap.libraries.StringLibrary;
 import ru.rap.models.AnswerModel;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 /**
  * Сервис работы с отгадками
@@ -30,14 +29,8 @@ public class AnswerService extends BaseService<AnswerModel>
 
 	/**
 	 * Решил ли пользователь загадку
-	 *
-	 * @param user_id   Номер пользователя
-	 * @param riddle_id Номер загадки
-	 * @return Решил или нет
-	 * @throws DbConnectException
-	 * @throws DaoException
 	 */
-	public boolean isAnswerRight(UUID user_id, UUID riddle_id) throws DbConnectException, DaoException
+	public boolean isAnswerRight(Integer user_id, Integer riddle_id) throws DbConnectException, DaoException
 	{
 		int result = dao.count("WHERE user_id=? AND riddle_id=? AND is_right=1", user_id, riddle_id);
 		return result > 0;
@@ -47,26 +40,26 @@ public class AnswerService extends BaseService<AnswerModel>
 	 * Добавляет новую запись в справочник
 	 *
 	 * @param answer
-	 * @param is_right
+	 * @param isRight
 	 * @return
 	 * @throws DbConnectException
 	 * @throws DaoException
 	 */
-	public void insert(UserEntity user, RiddleEntity riddle, String answer, boolean is_right)
+	public void insert(UserEntity user, RiddleEntity riddle, String answer, boolean isRight)
 	{
 		dao.insert(new AnswerEntity()
 				.setAnswerer(user)
 				.setRiddle(riddle)
 				.setAnswer(answer)
-				.setRight(is_right));
+				.setIsRight(isRight));
 	}
 
-	public Map<UUID, AnswerEntity> getFor(UUID userId, UUID... riddleIds) throws DbConnectException, DaoException
+	public Map<Integer, AnswerEntity> getFor(Integer userId, Integer...riddleIds)
 	{
 		String sql = "WHERE user_id=? AND is_right=1 AND riddle_id IN ("
 				+ StringLibrary.repeat("?", ",", riddleIds.length) + ")";
 
-		UUID[] args = new UUID[riddleIds.length + 1];
+		Integer[] args = new Integer[riddleIds.length + 1];
 		args[0] = userId;
 		for (int i = 0; i < riddleIds.length; i++) {
 			args[i + 1] = riddleIds[i];
@@ -77,8 +70,8 @@ public class AnswerService extends BaseService<AnswerModel>
 		if (list == null)
 			return null;
 
-		Map<UUID, AnswerEntity> result = new HashMap<>();
-		list.forEach(a -> result.put(a.getRiddle().getUid(), a));
+		Map<Integer, AnswerEntity> result = new HashMap<>();
+		list.forEach(a -> result.put(a.getRiddle().getId(), a));
 		return result;
 	}
 }

@@ -111,7 +111,7 @@ public class RiddleController extends BaseController
 	{
 		int count;
 
-		UUID authUserId = getPrincipalDetails().getUser().getUid();
+		Integer authUserId = getPrincipalDetails().getUser().getId();
 
 		try {
 			// сколько всего загадок может видеть текущий пользователь
@@ -159,8 +159,8 @@ public class RiddleController extends BaseController
 		}
 
 		// проверка доступа к загадке
-		if (riddle.getRiddler().getUid()
-				.equals(getPrincipalDetails().getUser().getUid())) {
+		if (riddle.getRiddler().getId()
+				.equals(getPrincipalDetails().getUser().getId())) {
 			request.setAttribute("error_message", "Вы не можете отгадывать свои загадки.");
 			return PAGE_RIDDLES;
 		}
@@ -171,8 +171,8 @@ public class RiddleController extends BaseController
 		// если загадка уже была решена этим пользователей, то ее нельзя решать снова
 		try {
 			if (answerService.isAnswerRight(
-					getPrincipalDetails().getUser().getUid(),
-					riddle.getUid())) {
+					getPrincipalDetails().getUser().getId(),
+					riddle.getId())) {
 				request.setAttribute("error_message", "Загадка уже была отгадана вами. Ее нельзя отгадывать снова.");
 				return PAGE_RIDDLE_ANSWER;
 			}
@@ -190,7 +190,7 @@ public class RiddleController extends BaseController
 			String answer = request.getParameter("answer")
 					.trim().toLowerCase().replace("[\\s]{2,}", " ");
 
-				riddleService.answer(getPrincipalDetails().getUser(), riddle, answer);
+			riddleService.answer(getPrincipalDetails().getUser(), riddle, answer);
 //			} catch (DbConnectException | DaoException e) {
 //				log.error("Сорвалась проверка отгадки:\n" + e.getMessage(), e);
 //				return reportAndForwardError(e);
@@ -209,14 +209,8 @@ public class RiddleController extends BaseController
 
 	private String doViewMyRiddles()
 	{
-		int count;
-		try {
-			// получаю количество загадок не текущего пользователя
-			count = riddleService.getCountOfUser(getPrincipalDetails().getUser().getUid());
-		} catch (DaoException | DbConnectException e) {
-			log.error("Сорвалось получение количества:\n" + e.getMessage(), e);
-			return reportAndForwardError(e);
-		}
+		// получаю количество загадок не текущего пользователя
+		int count = riddleService.getCountOfUser(getPrincipalDetails().getUser().getId());
 
 		// какой номер страницы
 		int pageIndex = PagerLibrary.getWorkshopPageIndex(request);
@@ -224,15 +218,9 @@ public class RiddleController extends BaseController
 		pageIndex = Math.max(1, Math.min(pageCount, pageIndex));
 
 		// получаю список загадок не текущего пользователя
-		List<RiddleEntity> riddles;
-		try {
-			riddles = riddleService.getListOfUser(getPrincipalDetails().getUser().getUid(),
-					(pageIndex - 1) * ITEMS_PER_PAGE,
-					ITEMS_PER_PAGE);
-		} catch (DaoException | DbConnectException e) {
-			log.error("Сорвалось получение загадок:\n" + e.getMessage(), e);
-			return reportAndForwardError(e);
-		}
+		List<RiddleEntity> riddles = riddleService.getListOfUser(getPrincipalDetails().getUser().getId(),
+				(pageIndex - 1) * ITEMS_PER_PAGE,
+				ITEMS_PER_PAGE);
 
 		request.setAttribute("pageCount", pageCount);
 		request.setAttribute("pageIndex", pageIndex);
@@ -252,13 +240,7 @@ public class RiddleController extends BaseController
 			String text = request.getParameter("text");
 			String answer_text = request.getParameter("answer");
 
-			int result;
-			try {
-				result = riddleService.createRiddle(getPrincipalDetails().getUser().getUid(), title, text, answer_text);
-			} catch (DaoException | DbConnectException e) {
-				log.error("Сорвалось создание загадки:\n" + e.getMessage(), e);
-				return reportAndForwardError(e);
-			}
+			int result = riddleService.createRiddle(getPrincipalDetails().getUser(), title, text, answer_text);
 
 			if (result == 0) {
 				// создалась новая загадка, переход в список
@@ -292,24 +274,24 @@ public class RiddleController extends BaseController
 		if (oldRiddle == null) return redirectTo(PAGE_RIDDLE_MINE);
 
 		// проверка доступа к загадке
-		if (!oldRiddle.getRiddler().getUid()
-				.equals(getPrincipalDetails().getUser().getUid())) {
+		if (!oldRiddle.getRiddler().getId()
+				.equals(getPrincipalDetails().getUser().getId())) {
 			request.setAttribute("error_message", "У вас нет прав на редактирование выбранной загадки.");
 			return PAGE_RIDDLE_MINE;
 		}
 
 		// если загадка уже была решена, то ее нельзя редактировать
-		if (oldRiddle.getAnswerCount() > 0) {
+		if (oldRiddle.getAnsweredCount() > 0) {
 			request.setAttribute("error_message", "Загадка уже была решена. Ее нельзя редактировать");
 			return PAGE_RIDDLE_MINE;
 		}
 
 		// поля загадки
-		request.setAttribute("riddle_id", oldRiddle.getUid().toString());
+		request.setAttribute("riddleId", oldRiddle.getId().toString());
 		request.setAttribute("title", oldRiddle.getTitle());
 		request.setAttribute("text", oldRiddle.getText());
 		request.setAttribute("image", oldRiddle.getImage());
-		request.setAttribute("answer_text", String.join(",", oldRiddle.getAnswers()));
+		request.setAttribute("answer_text", oldRiddle.getAnswerData());
 
 		// если указан метод POST, то пользователь пытается сохранить загадку
 		if ("post".equalsIgnoreCase(request.getMethod())) {
@@ -353,14 +335,14 @@ public class RiddleController extends BaseController
 			return PAGE_RIDDLE_MINE;
 
 		// проверка доступа к загадке
-		if (!riddle.getRiddler().getUid()
-				.equals(getPrincipalDetails().getUser().getUid())) {
+		if (!riddle.getRiddler().getId()
+				.equals(getPrincipalDetails().getUser().getId())) {
 			request.setAttribute("error_message", "У вас нет прав на редактирование выбранной загадки.");
 			return PAGE_RIDDLE_MINE;
 		}
 
 		// если загадка уже была решена, то ее нельзя редактировать
-		if (riddle.getAnswerCount() > 0) {
+		if (riddle.getAnsweredCount() > 0) {
 			request.setAttribute("error_message", "Загадка уже была решена. Ее нельзя редактировать");
 			return PAGE_RIDDLE_MINE;
 		}
