@@ -3,14 +3,15 @@ package ru.rap.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.remoting.rmi.RmiServiceExporter;
 import ru.rap.common.Messages;
 import ru.rap.common.exceptions.DaoException;
 import ru.rap.common.exceptions.DbConnectException;
-import ru.rap.dao.RiddleDao;
 import ru.rap.entities.AnswerEntity;
 import ru.rap.entities.RiddleEntity;
 import ru.rap.entities.UserEntity;
 import ru.rap.models.RiddleModel;
+import ru.rap.repositories.RiddleRepository;
 import ru.rap.validators.StrValidator;
 
 import java.sql.Timestamp;
@@ -27,7 +28,7 @@ public class RiddleService extends BaseService<RiddleModel>
 	private static final Logger log = LoggerFactory.getLogger(RiddleService.class);
 
 	@Autowired
-	private RiddleDao dao;
+	private RiddleRepository riddleRepository;
 
 	@Autowired
 	private UserService userService;
@@ -43,25 +44,20 @@ public class RiddleService extends BaseService<RiddleModel>
 	 * @throws DaoException
 	 * @throws DbConnectException
 	 */
-	public int getCountNotOfUser(Integer userId) throws DaoException, DbConnectException
+	public int getCountNotOfUser(int userId) throws DaoException, DbConnectException
 	{
-		return dao.count("WHERE user_id<>?", userId);
+		return riddleRepository.countNotByUserId(userId);
 	}
 
 	/**
 	 * Вернет список загадок, НЕ созданных указанным пользователем
 	 *
 	 * @param userId Номер пользователя
-	 * @param start  Начало
-	 * @param count  Конец
 	 * @return
-	 * @throws DaoException
-	 * @throws DbConnectException
 	 */
-	public Map<RiddleEntity, Timestamp> getListNotOfUser(Integer userId, int start, int count) throws DaoException, DbConnectException
+	public Map<RiddleEntity, Timestamp> getListNotOfUser(int userId)
 	{
-		List<RiddleEntity> _riddles = dao.select("WHERE user_id<>? LIMIT ?,?",
-				userId, start, count);
+		List<RiddleEntity> _riddles = riddleRepository.findNotByUserId(userId);
 
 		if (_riddles == null)
 			return null;
@@ -69,11 +65,10 @@ public class RiddleService extends BaseService<RiddleModel>
 		// для каждой загадки определяю:
 		// - отдагал ли ее указанный пользователь
 		// - когда он ее отгадал
-		Integer[] _ids;
-		_ids = _riddles
+		int[] _ids = _riddles
 				.stream()
-				.map(RiddleEntity::getId)
-				.toArray(Integer[]::new);
+				.mapToInt(RiddleEntity::getId)
+				.toArray();
 
 		Map<Integer, AnswerEntity> answers = answerService.getFor(userId, _ids);
 
@@ -96,30 +91,18 @@ public class RiddleService extends BaseService<RiddleModel>
 
 	/**
 	 * Вернет количество загадок, созданных указанным пользователем
-	 *
-	 * @param userId Номер пользователя
-	 * @return
-	 * @throws DaoException
-	 * @throws DbConnectException
 	 */
-	public int getCountOfUser(Integer userId)
+	public int getCountOfUser(int userId)
 	{
-		return dao.count("WHERE user_id=?", userId);
+		return riddleRepository.countByUserId(userId);
 	}
 
 	/**
 	 * Вернет список загадок, созданных указанным пользователем
-	 *
-	 * @param userId Номер пользователя
-	 * @param start  Начало
-	 * @param count  Конец
-	 * @return
-	 * @throws DaoException
-	 * @throws DbConnectException
 	 */
-	public List<RiddleEntity> getListOfUser(Integer userId, int start, int count)
+	public List<RiddleEntity> getListOfUser(int userId)
 	{
-		return dao.select("WHERE user_id=? LIMIT ?,?", userId, start, count);
+		return riddleRepository.findByUserId(userId);
 	}
 
 	/**
@@ -185,11 +168,13 @@ public class RiddleService extends BaseService<RiddleModel>
 		text = (String) list[1];
 		answerData = (String) list[2];
 
-		dao.insert(new RiddleEntity()
-				.setRiddler(riddler)
-				.setTitle(title)
-				.setText(text)
-				.setAnswerData(answerData));
+		riddleRepository.save(
+				new RiddleEntity()
+						.setRiddler(riddler)
+						.setTitle(title)
+						.setText(text)
+						.setAnswerData(answerData)
+		);
 
 		return 0;
 	}
@@ -202,9 +187,9 @@ public class RiddleService extends BaseService<RiddleModel>
 	 * @throws DbConnectException
 	 * @throws DaoException
 	 */
-	public RiddleEntity getRiddle(UUID id) throws DbConnectException, DaoException
+	public RiddleEntity findOne(int id) throws DbConnectException, DaoException
 	{
-		return dao.selectOneBy("id", id);
+		return riddleRepository.findOne(id);
 	}
 
 	/**
@@ -233,12 +218,12 @@ public class RiddleService extends BaseService<RiddleModel>
 
 //		boolean ok;
 //		try {
-//			ok = dao.update(new RiddleModel(oldRiddle.getId(), oldRiddle.getUserId(), title, text, oldRiddle.getImage(), answers, oldRiddle.getAnsweredCount(), oldRiddle.getAttemptCount(), oldRiddle.getCreated(), null));
-//			dao.commit();
+//			ok = riddleRepository.update(new RiddleModel(oldRiddle.getId(), oldRiddle.getUserId(), title, text, oldRiddle.getImage(), answers, oldRiddle.getAnsweredCount(), oldRiddle.getAttemptCount(), oldRiddle.getCreated(), null));
+//			riddleRepository.commit();
 //		} catch (DaoException | DbConnectException e) {
 //			log.error(e.getMessage(), e);
 //			// делаю откат
-//			dao.rollback();
+//			riddleRepository.rollback();
 //			throw e;
 //		}
 
@@ -255,7 +240,7 @@ public class RiddleService extends BaseService<RiddleModel>
 	 */
 	public void deleteRiddle(RiddleEntity riddle)
 	{
-		dao.delete(riddle);
+		riddleRepository.delete(riddle);
 	}
 
 	/**
@@ -271,13 +256,13 @@ public class RiddleService extends BaseService<RiddleModel>
 		// есть ли ответ среди правильных?
 		boolean is_right = riddle.getAnswerData().equals(answer);
 
-			// добавляю отгадку
-			answerService.insert(user, riddle, answer, is_right);
+		// добавляю отгадку
+		answerService.insert(user, riddle, answer, is_right);
 
-			// увеличиваю счетчик попыток и отгадок для самой загадки и пользователя
+		// увеличиваю счетчик попыток и отгадок для самой загадки и пользователя
 //			if (incTries(riddle, is_right) == 0
 //					&& userService.incTries(user, is_right) == 0) {
-//				dao.commit();
+//				riddleRepository.commit();
 //			} else {
 //				throw new DaoException("Не удалось обновить счетчики");
 //			}
@@ -296,6 +281,6 @@ public class RiddleService extends BaseService<RiddleModel>
 //		int answer_count = r.getAnsweredCount() + (rightsToo ? 1 : 0);
 //		int try_count = r.getAttemptCount() + 1;
 //
-//		return dao.update(new RiddleModel(r.getId(), r.getUserId(), r.getTitle(), r.getText(), r.getImage(), r.getAnswers(), answer_count, try_count, r.getCreated(), null)) ? 0 : -1;
+//		return riddleRepository.update(new RiddleModel(r.getId(), r.getUserId(), r.getTitle(), r.getText(), r.getImage(), r.getAnswers(), answer_count, try_count, r.getCreated(), null)) ? 0 : -1;
 //	}
 }

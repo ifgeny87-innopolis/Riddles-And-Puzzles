@@ -1,16 +1,15 @@
 package ru.rap.policies;
 
-import com.sun.istack.internal.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import ru.rap.common.exceptions.DaoException;
 import ru.rap.entities.UserEntity;
-import ru.rap.models.UserModel;
-import ru.rap.services.UserService;
+import ru.rap.repositories.UserRepository;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Created in project RiddlesAndPuzzles in 15.01.17
@@ -22,20 +21,20 @@ public class RapUserDetails implements UserDetails
 
 	private final UserEntity user;
 
-	private UserService userService;
+	@Autowired
+	private UserRepository userRepository;
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	//  CONSTRUCTOR
+	//  Constructors
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 
-	public RapUserDetails(@NotNull UserEntity user, @NotNull UserService userService)
+	public RapUserDetails(UserEntity user)
 	{
 		this.user = user;
-		this.userService = userService;
 	}
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	//  GETTERS
+	//  Getters
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 
 	public UserEntity getUser()
@@ -44,16 +43,13 @@ public class RapUserDetails implements UserDetails
 	}
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	//  IMPLEMENTS OF UserDetails
+	//  Implements of UserDetails
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities()
 	{
-		if (user == null) {
-			throw new NullPointerException("Пользователь не может быть null");
-		}
-		Collection<? extends GrantedAuthority> roles = userService.getUserRoles(user);
+		List<GrantedAuthority> roles = user.getGrantedAuthorities();
 		return roles;
 	}
 

@@ -1,9 +1,5 @@
 package ru.rap.services;
 
-import org.slf4j.Logger;
-import ru.rap.common.exceptions.DaoException;
-import ru.rap.common.exceptions.DbConnectException;
-import ru.rap.dao.BaseDao;
 import ru.rap.models.BaseModel;
 
 /**

@@ -46,7 +46,7 @@ public class RiddleController extends BaseController
 	private AnswerService answerService;
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	//  CONTROLLER METHODS
+	//  Controller methods
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 
 	@RequestMapping
@@ -56,7 +56,7 @@ public class RiddleController extends BaseController
 	}
 
 	@RequestMapping("answer/{id}")
-	public String getAnswer(@PathVariable String id) throws Exception
+	public String getAnswer(@PathVariable int id) throws Exception
 	{
 		return doAnswerRiddle(id);
 	}
@@ -74,34 +74,33 @@ public class RiddleController extends BaseController
 	}
 
 	@RequestMapping("edit/{id}")
-	public String getEdit(@RequestParam String id) throws Exception
+	public String getEdit(@RequestParam int id) throws Exception
 	{
 		return doEditRiddle(id);
 	}
 
 	@RequestMapping("delete/{id}")
-	public String getDelete(@RequestParam String id) throws Exception
+	public String getDelete(@RequestParam int id) throws Exception
 	{
 		return doDeleteRiddle(id);
 	}
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	//  COMMON
+	//  Common
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 
 	/**
 	 * Возвращает загадку по номеру
 	 *
-	 * @param uuid_text Номер загадки в тексте
 	 * @return null или загадка
 	 */
-	private RiddleEntity _getRiddle(String uuid_text) throws Exception
+	private RiddleEntity _getRiddle(int id) throws Exception
 	{
-		return riddleService.getRiddle(UUID.fromString(uuid_text));
+		return riddleService.findOne(id);
 	}
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	//  ACTIONS
+	//  Actions
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 
 	/**
@@ -130,14 +129,7 @@ public class RiddleController extends BaseController
 		// получаю список загадок не текущего пользователя с учетом пагинатора
 		Map<RiddleEntity, Timestamp> riddles;
 
-		try {
-			riddles = riddleService.getListNotOfUser(authUserId,
-					(pageIndex - 1) * ITEMS_PER_PAGE,
-					ITEMS_PER_PAGE);
-		} catch (DaoException | DbConnectException e) {
-			log.error("Сорвалось получение списка загадок:\n" + e.getMessage(), e);
-			return reportAndForwardError(e);
-		}
+		riddles = riddleService.getListNotOfUser(authUserId);
 
 		request.setAttribute("pageCount", pageCount);
 		request.setAttribute("pageIndex", pageIndex);
@@ -149,10 +141,10 @@ public class RiddleController extends BaseController
 	/**
 	 * Отгадывание выбранной загадки
 	 */
-	private String doAnswerRiddle(String uuid_text) throws Exception
+	private String doAnswerRiddle(int id) throws Exception
 	{
 		// получаю загадку
-		RiddleEntity riddle = _getRiddle(uuid_text);
+		RiddleEntity riddle = _getRiddle(id);
 		if (riddle == null) {
 			request.setAttribute("error_message", "Загадка не существует. Возможно, украли инопланетяне.");
 			return PAGE_RIDDLES;
@@ -218,9 +210,7 @@ public class RiddleController extends BaseController
 		pageIndex = Math.max(1, Math.min(pageCount, pageIndex));
 
 		// получаю список загадок не текущего пользователя
-		List<RiddleEntity> riddles = riddleService.getListOfUser(getPrincipalDetails().getUser().getId(),
-				(pageIndex - 1) * ITEMS_PER_PAGE,
-				ITEMS_PER_PAGE);
+		List<RiddleEntity> riddles = riddleService.getListOfUser(getPrincipalDetails().getUser().getId());
 
 		request.setAttribute("pageCount", pageCount);
 		request.setAttribute("pageIndex", pageIndex);
@@ -264,13 +254,11 @@ public class RiddleController extends BaseController
 
 	/**
 	 * Редактирование существующей загадки
-	 *
-	 * @param uuid_text Номер загадки, берется из запроса
 	 */
-	private String doEditRiddle(String uuid_text) throws Exception
+	private String doEditRiddle(int id) throws Exception
 	{
 		// получаю загадку
-		RiddleEntity oldRiddle = _getRiddle(uuid_text);
+		RiddleEntity oldRiddle = _getRiddle(id);
 		if (oldRiddle == null) return redirectTo(PAGE_RIDDLE_MINE);
 
 		// проверка доступа к загадке
@@ -327,10 +315,10 @@ public class RiddleController extends BaseController
 		return PAGE_RIDDLE_EDIT;
 	}
 
-	private String doDeleteRiddle(String uuid_text) throws Exception
+	private String doDeleteRiddle(int id) throws Exception
 	{
 		// получаю загадку
-		RiddleEntity riddle = _getRiddle(uuid_text);
+		RiddleEntity riddle = _getRiddle(id);
 		if (riddle == null)
 			return PAGE_RIDDLE_MINE;
 

@@ -1,10 +1,15 @@
 package ru.rap.entities;
 
+import org.hibernate.annotations.*;
+import org.hibernate.annotations.Cache;
 import org.springframework.security.core.GrantedAuthority;
 import ru.rap.roles.ROLE_ADMIN;
 import ru.rap.roles.ROLE_USER;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Collection;
 
@@ -15,7 +20,8 @@ import java.util.Collection;
  */
 @Entity
 @Table(name = "role")
-public class RoleEntity
+@Cache(usage=CacheConcurrencyStrategy.READ_ONLY, region="role")
+public class RoleEntity implements Serializable
 {
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 	//  FIELDS

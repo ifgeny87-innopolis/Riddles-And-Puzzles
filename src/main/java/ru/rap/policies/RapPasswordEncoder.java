@@ -8,7 +8,6 @@ import ru.rap.libraries.HashLibrary;
  */
 public class RapPasswordEncoder implements PasswordEncoder
 {
-
 	@Override
 	public String encode(CharSequence rawPassword)
 	{

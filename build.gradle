@@ -12,6 +12,9 @@ repositories {
 }
 
 dependencies {
+    //Guava
+    compile 'com.google.guava:guava:21.0'
+
     // logging
     compile 'org.slf4j:slf4j-api:1.7.21'
     compile 'org.slf4j:slf4j-log4j12:1.7.21'
@@ -26,11 +29,11 @@ dependencies {
     compile 'javax.servlet:javax.servlet-api:3.1.0'
     compile 'com.google.code.gson:gson:2.8.0'
 
-    // mysql database driver
-    compile 'mysql:mysql-connector-java:6.0.5'
-
     // JSP Standard Tag Library
     compile 'jstl:jstl:1.2'
+
+    // mysql database driver
+    compile 'mysql:mysql-connector-java:6.0.5'
 
     // Spring
     compile 'org.springframework:spring-core:4.3.5.RELEASE'
@@ -45,7 +48,7 @@ dependencies {
     compile 'org.springframework.security:spring-security-config:4.2.1.RELEASE'
     compile 'org.springframework.security:spring-security-taglibs:4.2.1.RELEASE'
     compile 'org.springframework.security:spring-security-core:4.2.1.RELEASE'
-    
+
     // Spring Data
     compile 'org.springframework.data:spring-data-commons:1.12.5.RELEASE'
     compile 'org.springframework.data:spring-data-jpa:1.10.6.RELEASE'
@@ -60,11 +63,15 @@ dependencies {
 
     // hibernate library dependency
     compile 'dom4j:dom4j:1.4.1'
-    
+
     // Spring Hibernate, 10.01.2008
 //    compile 'org.springframework:spring-hibernate3:2.0.8'
 //    compile 'org.springframework:spring-hibernate3:4.2.1.RELEASE'
 
+}
+
+compileTestJava {
+    options.encoding = "UTF-8"
 }
 
 compileJava {

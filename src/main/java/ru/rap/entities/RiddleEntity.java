@@ -1,6 +1,13 @@
 package ru.rap.entities;
 
+import org.hibernate.annotations.*;
+import org.hibernate.annotations.Cache;
+
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.Table;
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 /**
@@ -10,12 +17,9 @@ import java.sql.Timestamp;
  */
 @Entity
 @Table(name = "riddle")
-public class RiddleEntity
+@Cache(usage=CacheConcurrencyStrategy.READ_ONLY, region="riddle")
+public class RiddleEntity implements Serializable
 {
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	//  FIELDS
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;

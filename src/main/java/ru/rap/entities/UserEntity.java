@@ -1,8 +1,17 @@
 package ru.rap.entities;
 
+import org.hibernate.annotations.*;
+import org.hibernate.annotations.Cache;
+import org.springframework.security.core.GrantedAuthority;
+
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Сущность пользователя
@@ -11,7 +20,8 @@ import java.util.List;
  */
 @Entity
 @Table(name = "user")
-public class UserEntity
+@Cache(usage=CacheConcurrencyStrategy.READ_ONLY, region="user")
+public class UserEntity implements Serializable
 {
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 	//  FIELDS
@@ -52,8 +62,8 @@ public class UserEntity
 	// роли
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "role2user",
-			joinColumns = @JoinColumn(name = "id_role"),
-			inverseJoinColumns = @JoinColumn(name = "id_user"))
+			joinColumns = @JoinColumn(name = "id_user"),
+			inverseJoinColumns = @JoinColumn(name = "id_role"))
 	private List<RoleEntity> roles;
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
@@ -103,6 +113,13 @@ public class UserEntity
 	public List<RoleEntity> getRoles()
 	{
 		return roles;
+	}
+
+	public List<GrantedAuthority> getGrantedAuthorities() {
+		return getRoles()
+				.stream()
+				.map(RoleEntity::getGrantedAuthority)
+				.collect(Collectors.toList());
 	}
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>

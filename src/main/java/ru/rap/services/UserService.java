@@ -8,12 +8,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import ru.rap.common.Messages;
 import ru.rap.common.validators.PasswordValidator;
 import ru.rap.common.validators.UsernameValidator;
-import ru.rap.dao.RoleDao;
-import ru.rap.dao.UserDao;
+import ru.rap.entities.RoleEntity;
 import ru.rap.entities.UserEntity;
 import ru.rap.models.UserModel;
+import ru.rap.repositories.RoleRepository;
+import ru.rap.repositories.UserRepository;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -27,10 +29,10 @@ public class UserService extends BaseService<UserModel>
 	private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
 	@Autowired
-	private UserDao userDao;
+	private UserRepository userRepository;
 
 	@Autowired
-	private RoleDao roleDao;
+	private RoleRepository roleRepository;
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -56,7 +58,7 @@ public class UserService extends BaseService<UserModel>
 		}
 
 		// проверяю наличие такого же имени
-		UserEntity user = userDao.selectOneBy("name", username);
+		UserEntity user = userRepository.findByName(username);
 
 		if (user != null) {
 			return Messages.RES_USER_ALREADY_EXIST;
@@ -66,9 +68,11 @@ public class UserService extends BaseService<UserModel>
 		String hashPassword = passwordEncoder.encode(password);
 
 		// пользователь не существует, создаем
-		userDao.insert(new UserEntity()
-				.setName(username)
-				.setHashPassword(hashPassword));
+		userRepository.save(
+				new UserEntity()
+						.setName(username)
+						.setHashPassword(hashPassword)
+		);
 
 		return 0;
 	}
@@ -84,9 +88,9 @@ public class UserService extends BaseService<UserModel>
 		return new UserModel(e.getId(), e.getName(), e.getAnsweredCount(), e.getAttemptCount());
 	}
 
-	public UserModel getByUid(UUID uid)
+	public UserModel getByUid(int id)
 	{
-		UserEntity e = userDao.selectOne("id", uid);
+		UserEntity e = userRepository.findOne(id);
 		return getModel(e);
 	}
 
@@ -98,11 +102,7 @@ public class UserService extends BaseService<UserModel>
 	 */
 	public UserEntity getByName(String username)
 	{
-		return userDao.selectOneBy("name", username);
-	}
-
-	public Collection<? extends GrantedAuthority> getUserRoles(UserEntity user)
-	{
-		return roleDao.getRolesByUser(user);
+		UserEntity u = userRepository.findByName(username);
+		return u;
 	}
 }
