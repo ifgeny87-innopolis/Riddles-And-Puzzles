@@ -137,8 +137,7 @@ public abstract class BaseController
 		model.put("exception_trace", Arrays
 				.stream(ex.getStackTrace())
 				.map(t -> "call <b>" + t.getMethodName() + "</b> from <i>" + t.getFileName() + ":" + t.getLineNumber() + "</i>")
-				.collect(Collectors.joining("<br/>"))
-				.toString());
+				.collect(Collectors.joining("<br/>")));
 		return new ModelAndView("error", model);
 	}
 }

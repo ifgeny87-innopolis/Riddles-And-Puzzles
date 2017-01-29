@@ -27,10 +27,10 @@
     <bean class="ru.rap.common.validators.PasswordValidator" id="passwordValidator"/>
 
     <!-- Context scan -->
-    <context:component-scan base-package="ru.rap.repositories"/>
-    <context:component-scan base-package="ru.rap.services"/>
     <context:component-scan base-package="ru.rap.controllers"/>
     <context:component-scan base-package="ru.rap.policies"/>
+    <context:component-scan base-package="ru.rap.repositories"/>
+    <context:component-scan base-package="ru.rap.services"/>
 
     <!-- @Transaction annotation support -->
     <tx:annotation-driven transaction-manager="transactionManager"/>

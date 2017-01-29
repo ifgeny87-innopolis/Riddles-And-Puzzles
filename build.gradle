@@ -12,7 +12,7 @@ repositories {
 }
 
 dependencies {
-    //Guava
+    // Guava
     compile 'com.google.guava:guava:21.0'
 
     // logging

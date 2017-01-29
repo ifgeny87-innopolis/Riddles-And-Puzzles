@@ -1,51 +1,77 @@
 package ru.rap.models;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 /**
  * Сущность пользователя
  *
  * Created in project RiddlesAndPuzzles in 23.12.2016
  */
-public class UserModel extends BaseModel
+public class UserModel implements IModel
 {
+	//id
+	private final Integer id;
+
 	// имя пользователя
 	private final String name;
 
 	// количество верно отгаданных
-	private final int answerCount;
+	private final int answeredCount;
 
 	// количество попыток
-	private final int tryCount;
+	private final int attemptCount;
+
+	// время создания
+	private final java.sql.Timestamp created;
+
+	// время обновления
+	private final java.sql.Timestamp updated;
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	//  Constructors
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-	public UserModel(Integer id, String name, int answerCount, int tryCount)
+	public UserModel(Integer id, String name, int answeredCount, int attemptCount, Timestamp created, Timestamp updated)
 	{
-		super(id);
+		this.id = id;
 		this.name = name;
-		this.answerCount = answerCount;
-		this.tryCount = tryCount;
+		this.answeredCount = answeredCount;
+		this.attemptCount = attemptCount;
+		this.created = created;
+		this.updated = updated;
 	}
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 	//  Getters
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 
+	public Integer getId()
+	{
+		return id;
+	}
+
 	public String getName()
 	{
 		return name;
 	}
 
-	public int getAnswerCount()
+	public int getAnsweredCount()
 	{
-		return answerCount;
+		return answeredCount;
 	}
 
-	public int getTryCount()
+	public int getAttemptCount()
 	{
-		return tryCount;
+		return attemptCount;
+	}
+
+	public Timestamp getCreated()
+	{
+		return created;
+	}
+
+	public Timestamp getUpdated()
+	{
+		return updated;
 	}
 }

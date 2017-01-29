@@ -7,8 +7,11 @@ import java.sql.Timestamp;
  *
  * Created in project RiddlesAndPuzzles in 28.12.2016
  */
-public class AnswerModel extends BaseModel
+public class AnswerModel implements IModel
 {
+	//id
+	private final Integer id;
+
 	// id автора
 	private final Integer answererId;
 
@@ -30,7 +33,7 @@ public class AnswerModel extends BaseModel
 
 	public AnswerModel(Integer id, Integer answererId, Integer riddleId, String answer, boolean isRight, Timestamp created)
 	{
-		super(id);
+		this.id = id;
 		this.answererId = answererId;
 		this.riddleId = riddleId;
 		this.answer = answer;
@@ -38,16 +41,16 @@ public class AnswerModel extends BaseModel
 		this.created = created;
 	}
 
-	public AnswerModel(Integer answererId, Integer riddleId, String answer, boolean isRight)
-	{
-		this(null, answererId, riddleId, answer, isRight, null);
-	}
-
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 	//  Getters
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 
-	public Integer getUserId()
+	public Integer getId()
+	{
+		return id;
+	}
+
+	public Integer getAnswererId()
 	{
 		return answererId;
 	}

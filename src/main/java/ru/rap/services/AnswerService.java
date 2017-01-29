@@ -20,7 +20,7 @@ import java.util.Map;
  *
  * Created in project RiddlesAndPuzzles in 28.12.2016
  */
-public class AnswerService extends BaseService<AnswerModel>
+public class AnswerService implements IService<AnswerModel, AnswerEntity>
 {
 	// Logger
 	private static final Logger log = LoggerFactory.getLogger(AnswerService.class);
@@ -31,7 +31,7 @@ public class AnswerService extends BaseService<AnswerModel>
 	/**
 	 * Решил ли пользователь загадку
 	 */
-	public boolean isAnswerRight(int id_user, int id_riddle) throws DbConnectException, DaoException
+	public boolean isAnswerRight(int id_user, int id_riddle)
 	{
 		int result = answerRepository.isAnswerRight(id_user, id_riddle);
 		return result > 0;
@@ -67,5 +67,18 @@ public class AnswerService extends BaseService<AnswerModel>
 		Map<Integer, AnswerEntity> result = new HashMap<>();
 		list.forEach(a -> result.put(a.getRiddle().getId(), a));
 		return result;
+	}
+
+	@Override
+	public AnswerModel toPojo(AnswerEntity arg)
+	{
+		return new AnswerModel(
+				arg.getId(),
+				arg.getAnswerer().getId(),
+				arg.getRiddle().getId(),
+				arg.getAnswer(),
+				arg.isRight(),
+				arg.getCreated()
+		);
 	}
 }

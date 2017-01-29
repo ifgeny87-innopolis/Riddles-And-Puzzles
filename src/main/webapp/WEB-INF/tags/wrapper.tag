@@ -17,8 +17,8 @@
 </head>
 <body>
 <%
-    UserModel user = (UserModel) request.getAttribute("authUser");
-    if (user != null) {
+    UserModel userEntity = (UserModel) request.getAttribute("authUser");
+    if (userEntity != null) {
 %>
 <header class="container">
     <nav class="navbar navbar-default">

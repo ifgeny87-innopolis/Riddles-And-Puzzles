@@ -3,7 +3,6 @@ package ru.rap.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.remoting.rmi.RmiServiceExporter;
 import ru.rap.common.Messages;
 import ru.rap.common.exceptions.DaoException;
 import ru.rap.common.exceptions.DbConnectException;
@@ -11,18 +10,22 @@ import ru.rap.entities.AnswerEntity;
 import ru.rap.entities.RiddleEntity;
 import ru.rap.entities.UserEntity;
 import ru.rap.models.RiddleModel;
+import ru.rap.models.UserModel;
+import ru.rap.repositories.AnswerRepository;
 import ru.rap.repositories.RiddleRepository;
+import ru.rap.repositories.UserRepository;
 import ru.rap.validators.StrValidator;
 
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Сервис работы с загадками
  *
  * Created in project RiddlesAndPuzzles in 27.12.2016
  */
-public class RiddleService extends BaseService<RiddleModel>
+public class RiddleService implements IService<RiddleModel, RiddleEntity>
 {
 	// Logger
 	private static final Logger log = LoggerFactory.getLogger(RiddleService.class);
@@ -31,7 +34,7 @@ public class RiddleService extends BaseService<RiddleModel>
 	private RiddleRepository riddleRepository;
 
 	@Autowired
-	private UserService userService;
+	private UserRepository userRepository;
 
 	@Autowired
 	private AnswerService answerService;
@@ -44,7 +47,7 @@ public class RiddleService extends BaseService<RiddleModel>
 	 * @throws DaoException
 	 * @throws DbConnectException
 	 */
-	public int getCountNotOfUser(int userId) throws DaoException, DbConnectException
+	public int getCountNotOfUser(int userId)
 	{
 		return riddleRepository.countNotByUserId(userId);
 	}
@@ -55,7 +58,7 @@ public class RiddleService extends BaseService<RiddleModel>
 	 * @param userId Номер пользователя
 	 * @return
 	 */
-	public Map<RiddleEntity, Timestamp> getListNotOfUser(int userId)
+	public Map<RiddleModel, Timestamp> getListNotOfUser(int userId)
 	{
 		List<RiddleEntity> _riddles = riddleRepository.findNotByUserId(userId);
 
@@ -73,16 +76,16 @@ public class RiddleService extends BaseService<RiddleModel>
 		Map<Integer, AnswerEntity> answers = answerService.getFor(userId, _ids);
 
 		// список отгадок получен, разбираю
-		Map<RiddleEntity, Timestamp> result = new HashMap<>();
+		Map<RiddleModel, Timestamp> result = new HashMap<>();
 
 		for (RiddleEntity riddle : _riddles) {
 			Integer _riddleId = riddle.getId();
 			if (answers.containsKey(_riddleId)) {
 				AnswerEntity _answer = answers.get(_riddleId);
 				Timestamp _timestamp = _answer.getCreated();
-				result.put(riddle, _timestamp);
+				result.put(toPojo(riddle), _timestamp);
 			} else {
-				result.put(riddle, null);
+				result.put(toPojo(riddle), null);
 			}
 		}
 
@@ -100,9 +103,13 @@ public class RiddleService extends BaseService<RiddleModel>
 	/**
 	 * Вернет список загадок, созданных указанным пользователем
 	 */
-	public List<RiddleEntity> getListOfUser(int userId)
+	public List<RiddleModel> getListOfUser(int userId)
 	{
-		return riddleRepository.findByUserId(userId);
+		List<RiddleEntity> riddles = riddleRepository.findByUserId(userId);
+		return riddles
+				.stream()
+				.map(this::toPojo)
+				.collect(Collectors.toList());
 	}
 
 	/**
@@ -155,7 +162,7 @@ public class RiddleService extends BaseService<RiddleModel>
 	/**
 	 * Создание новой загадки
 	 */
-	public int createRiddle(UserEntity riddler, String title, String text, String answerData)
+	public int createRiddle(int riddlerId, String title, String text, String answerData)
 	{
 		// сначала валидация полей
 		Object res = validate(title, text, answerData);
@@ -167,6 +174,8 @@ public class RiddleService extends BaseService<RiddleModel>
 		title = (String) list[0];
 		text = (String) list[1];
 		answerData = (String) list[2];
+
+		UserEntity riddler = userRepository.findOne(riddlerId);
 
 		riddleRepository.save(
 				new RiddleEntity()
@@ -181,29 +190,17 @@ public class RiddleService extends BaseService<RiddleModel>
 
 	/**
 	 * Выборка загадки по номеру
-	 *
-	 * @param id Номер загадки
-	 * @return null или объект загадки
-	 * @throws DbConnectException
-	 * @throws DaoException
 	 */
-	public RiddleEntity findOne(int id) throws DbConnectException, DaoException
+	public RiddleModel findOne(int id)
 	{
-		return riddleRepository.findOne(id);
+		RiddleEntity e = riddleRepository.findOne(id);
+		return toPojo(e);
 	}
 
 	/**
 	 * Обновление существующей загадки
-	 *
-	 * @param oldRiddle   Объект редактируемой зашадки
-	 * @param title       Новое название
-	 * @param text        Новый текст загадки
-	 * @param answer_text Новые ответы
-	 * @return 0 или номер ошибки
-	 * @throws DbConnectException
-	 * @throws DaoException
 	 */
-	public int updateRiddle(RiddleEntity oldRiddle, String title, String text, String answer_text) throws DbConnectException, DaoException
+	public int updateRiddle(RiddleModel oldRiddle, String title, String text, String answer_text)
 	{
 		// сначала валидация полей
 		Object res = validate(title, text, answer_text);
@@ -218,7 +215,7 @@ public class RiddleService extends BaseService<RiddleModel>
 
 //		boolean ok;
 //		try {
-//			ok = riddleRepository.update(new RiddleModel(oldRiddle.getId(), oldRiddle.getUserId(), title, text, oldRiddle.getImage(), answers, oldRiddle.getAnsweredCount(), oldRiddle.getAttemptCount(), oldRiddle.getCreated(), null));
+//			ok = riddleRepository.update(new RiddleModel(oldRiddle.getId(), oldRiddle.getRiddlerId(), title, text, oldRiddle.getImage(), answers, oldRiddle.getAnsweredCount(), oldRiddle.getAttemptCount(), oldRiddle.getCreated(), null));
 //			riddleRepository.commit();
 //		} catch (DaoException | DbConnectException e) {
 //			log.error(e.getMessage(), e);
@@ -232,32 +229,25 @@ public class RiddleService extends BaseService<RiddleModel>
 
 	/**
 	 * Удаление загадки
-	 *
-	 * @param riddle
-	 * @return
-	 * @throws DaoException
-	 * @throws DbConnectException
 	 */
-	public void deleteRiddle(RiddleEntity riddle)
+	public void deleteRiddle(int id)
 	{
-		riddleRepository.delete(riddle);
+		RiddleEntity e = riddleRepository.findOne(id);
+		riddleRepository.delete(e);
 	}
 
 	/**
 	 * Выполнение ответа на загадку
-	 *
-	 * @param user
-	 * @param riddle
-	 * @param answer
-	 * @return
 	 */
-	public void answer(UserEntity user, RiddleEntity riddle, String answer) throws DbConnectException, DaoException
+	public void answer(int answererId, int riddleId, String answer)
 	{
 		// есть ли ответ среди правильных?
+		RiddleEntity riddle = riddleRepository.findOne(riddleId);
 		boolean is_right = riddle.getAnswerData().equals(answer);
 
 		// добавляю отгадку
-		answerService.insert(user, riddle, answer, is_right);
+		UserEntity answerer = userRepository.findOne(answererId);
+		answerService.insert(answerer, riddle, answer, is_right);
 
 		// увеличиваю счетчик попыток и отгадок для самой загадки и пользователя
 //			if (incTries(riddle, is_right) == 0
@@ -266,6 +256,23 @@ public class RiddleService extends BaseService<RiddleModel>
 //			} else {
 //				throw new DaoException("Не удалось обновить счетчики");
 //			}
+	}
+
+	@Override
+	public RiddleModel toPojo(RiddleEntity arg)
+	{
+		return new RiddleModel(
+				arg.getId(),
+				arg.getRiddler().getId(),
+				arg.getTitle(),
+				arg.getText(),
+				arg.getImage(),
+				new String[0],
+				arg.getAnsweredCount(),
+				arg.getAttemptCount(),
+				arg.getCreated(),
+				arg.getUpdated()
+		);
 	}
 
 //	/**
@@ -281,6 +288,6 @@ public class RiddleService extends BaseService<RiddleModel>
 //		int answer_count = r.getAnsweredCount() + (rightsToo ? 1 : 0);
 //		int try_count = r.getAttemptCount() + 1;
 //
-//		return riddleRepository.update(new RiddleModel(r.getId(), r.getUserId(), r.getTitle(), r.getText(), r.getImage(), r.getAnswers(), answer_count, try_count, r.getCreated(), null)) ? 0 : -1;
+//		return riddleRepository.update(new RiddleModel(r.getId(), r.getRiddlerId(), r.getTitle(), r.getText(), r.getImage(), r.getAnswers(), answer_count, try_count, r.getCreated(), null)) ? 0 : -1;
 //	}
 }

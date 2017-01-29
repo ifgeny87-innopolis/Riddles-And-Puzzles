@@ -9,7 +9,6 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,12 +20,8 @@ import java.util.stream.Collectors;
 @Entity
 @Table(name = "user")
 @Cache(usage=CacheConcurrencyStrategy.READ_ONLY, region="user")
-public class UserEntity implements Serializable
+public class UserEntity implements IEntity, Serializable
 {
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	//  FIELDS
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;

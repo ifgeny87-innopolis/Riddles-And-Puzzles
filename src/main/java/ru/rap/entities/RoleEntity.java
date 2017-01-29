@@ -11,7 +11,6 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.Collection;
 
 /**
  * Сущность роли пользователя
@@ -21,12 +20,8 @@ import java.util.Collection;
 @Entity
 @Table(name = "role")
 @Cache(usage=CacheConcurrencyStrategy.READ_ONLY, region="role")
-public class RoleEntity implements Serializable
+public class RoleEntity implements IEntity, Serializable
 {
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	//  FIELDS
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;

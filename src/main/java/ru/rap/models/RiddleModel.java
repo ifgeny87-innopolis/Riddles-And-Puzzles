@@ -7,10 +7,13 @@ import java.sql.Timestamp;
  *
  * Created in project RiddlesAndPuzzles in 25.12.2016
  */
-public class RiddleModel extends BaseModel
+public class RiddleModel implements IModel
 {
+	//id
+	private final Integer id;
+
 	// id автора
-	private final Integer userId;
+	private final Integer riddlerId;
 
 	// заголовок
 	private final String title;
@@ -28,7 +31,7 @@ public class RiddleModel extends BaseModel
 	private final int answeredCount;
 
 	// количество сделанных попыток
-	private final int tryCount;
+	private final int attemptCount;
 
 	// время создания
 	private final java.sql.Timestamp created;
@@ -40,16 +43,16 @@ public class RiddleModel extends BaseModel
 	//  Constructors
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-	public RiddleModel(Integer id, Integer userId, String title, String text, String image, String[] answers, int answeredCount, int tryCount, Timestamp created, Timestamp updated)
+	public RiddleModel(Integer id, Integer riddlerId, String title, String text, String image, String[] answers, int answeredCount, int attemptCount, Timestamp created, Timestamp updated)
 	{
-		super(id);
-		this.userId = userId;
+		this.id = id;
+		this.riddlerId = riddlerId;
 		this.title = title;
 		this.text = text;
 		this.image = image;
 		this.answers = answers;
 		this.answeredCount = answeredCount;
-		this.tryCount = tryCount;
+		this.attemptCount = attemptCount;
 		this.created = created;
 		this.updated = updated;
 	}
@@ -58,9 +61,14 @@ public class RiddleModel extends BaseModel
 	//  Getters
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 
-	public Integer getUserId()
+	public Integer getId()
 	{
-		return userId;
+		return id;
+	}
+
+	public Integer getRiddlerId()
+	{
+		return riddlerId;
 	}
 
 	public String getTitle()
@@ -78,7 +86,7 @@ public class RiddleModel extends BaseModel
 		return image;
 	}
 
-	public String[] getAnswer()
+	public String[] getAnswers()
 	{
 		return answers;
 	}
@@ -88,9 +96,9 @@ public class RiddleModel extends BaseModel
 		return answeredCount;
 	}
 
-	public int getTryCount()
+	public int getAttemptCount()
 	{
-		return tryCount;
+		return attemptCount;
 	}
 
 	public Timestamp getCreated()

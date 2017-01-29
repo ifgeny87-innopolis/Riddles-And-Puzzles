@@ -47,7 +47,7 @@
             <c:forEach items="${riddles}" var="i">
                 <tr>
                     <td><a href="${PATH}/${ANSWER_URL}/${i.key.id}">${i.key.title}</a></td>
-                    <td>${i.key.getAnswerCount()}</td>
+                    <td>${i.key.answeredCount}</td>
                     <td>${i.key.updated == null ? i.key.created : i.key.updated}</td>
                     <td>${i.value == null ? "Не решено" : "Решено"}</td>
                     <td>${i.value == null ? "" : i.value}</td>

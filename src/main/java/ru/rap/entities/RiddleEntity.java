@@ -18,7 +18,7 @@ import java.sql.Timestamp;
 @Entity
 @Table(name = "riddle")
 @Cache(usage=CacheConcurrencyStrategy.READ_ONLY, region="riddle")
-public class RiddleEntity implements Serializable
+public class RiddleEntity implements IEntity, Serializable
 {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

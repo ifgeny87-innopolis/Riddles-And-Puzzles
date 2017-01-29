@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ru.rap.entities.UserEntity;
+import ru.rap.models.UserModel;
 import ru.rap.repositories.UserRepository;
+import ru.rap.services.UserService;
 
 import java.util.Collection;
 import java.util.List;
@@ -19,27 +21,32 @@ public class RapUserDetails implements UserDetails
 	// logger
 	private static final Logger log = LoggerFactory.getLogger(RapUserDetails.class);
 
-	private final UserEntity user;
+	private final UserEntity userEntity;
+	private final UserModel userModel;
 
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private UserService userService;
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 	//  Constructors
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 
-	public RapUserDetails(UserEntity user)
+	public RapUserDetails(UserEntity userEntity)
 	{
-		this.user = user;
+		this.userEntity = userEntity;
+		this.userModel = userService.toPojo(userEntity);
 	}
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 	//  Getters
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 
-	public UserEntity getUser()
+	public UserModel getUser()
 	{
-		return user;
+		return userModel;
 	}
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
@@ -49,21 +56,21 @@ public class RapUserDetails implements UserDetails
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities()
 	{
-		List<GrantedAuthority> roles = user.getGrantedAuthorities();
+		List<GrantedAuthority> roles = userEntity.getGrantedAuthorities();
 		return roles;
 	}
 
 	@Override
 	public String getPassword()
 	{
-		String pwd = user.getHashPassword();
+		String pwd = userEntity.getHashPassword();
 		return pwd;
 	}
 
 	@Override
 	public String getUsername()
 	{
-		return user.getName();
+		return userModel.getName();
 	}
 
 	@Override

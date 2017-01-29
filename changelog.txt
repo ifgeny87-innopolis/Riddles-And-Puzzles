@@ -684,3 +684,35 @@ Change files from: Fri Jan 27 21:26:42 MSK 2017
 New version 1.0-SNAPSHOT build 0.0.1.43
 Date: Fri Jan 27 21:33:04 MSK 2017
 Change files from: Fri Jan 27 21:28:28 MSK 2017
+
+------------------------------------------------------------
+New version 1.0-SNAPSHOT build 0.0.1.44
+Date: Mon Jan 30 00:37:54 MSK 2017
+Change files from: Fri Jan 27 21:33:04 MSK 2017
+- main/webapp/WEB-INF/views/riddles.jsp
+- main/webapp/WEB-INF/application.xml
+- main/webapp/WEB-INF/tags/wrapper.tag
+- main/webapp/WEB-INF/spring-security.xml
+- main/java/ru/rap/services/IService.java
+- main/java/ru/rap/services/RiddleService.java
+- main/java/ru/rap/services/AnswerService.java
+- main/java/ru/rap/services/UserService.java
+- main/java/ru/rap/controllers/BaseController.java
+- main/java/ru/rap/controllers/RiddleController.java
+- main/java/ru/rap/entities/RoleEntity.java
+- main/java/ru/rap/entities/IEntity.java
+- main/java/ru/rap/entities/UserEntity.java
+- main/java/ru/rap/entities/RiddleEntity.java
+- main/java/ru/rap/entities/AnswerEntity.java
+- main/java/ru/rap/policies/RapUserDetails.java
+- main/java/ru/rap/models/UserModel.java
+- main/java/ru/rap/models/RiddleModel.java
+- main/java/ru/rap/models/RoleModel.java
+- main/java/ru/rap/models/AnswerModel.java
+- main/java/ru/rap/models/IModel.java
+
+------------------------------------------------------------
+New version 1.0-SNAPSHOT build 0.0.1.45
+Date: Mon Jan 30 00:38:40 MSK 2017
+Change files from: Mon Jan 30 00:37:54 MSK 2017
+- main/java/ru/rap/policies/RapUserDetails.java
